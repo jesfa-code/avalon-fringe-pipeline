@@ -1,210 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Avalon Talent Pipeline</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" defer></script>
-  <script>
-    function showTab(tabId) {
-      const tabs = document.querySelectorAll('.tab-content');
-      tabs.forEach(tab => tab.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
-
-      const buttons = document.querySelectorAll('.tab-button');
-      buttons.forEach(btn => btn.classList.remove('bg-blue-600', 'text-white'));
-      document.querySelector(`[data-tab="${tabId}"]`).classList.add('bg-blue-600', 'text-white');
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll("table").forEach(table => {
-        new simpleDatatables.DataTable(table, { searchable: true, fixedHeight: true });
-      });
-    });
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avalon Talent Pipeline</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.tab-content { display: none; }
+.tab-active { display: block; }
+</style>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-50 text-gray-900">
 
-  <!-- Header -->
-  <header class="bg-white shadow p-4 mb-6">
-    <h1 class="text-2xl font-bold text-center">Avalon Talent Pipeline</h1>
-    <p class="text-center text-gray-600">Fringe comedians, social media acts, London plays, and trending books</p>
-  </header>
+<header class="bg-white shadow p-4 mb-6">
+  <h1 class="text-2xl font-bold text-center">Avalon Talent Pipeline</h1>
+  <p class="text-center text-gray-600">Fringe comedians, social media acts, London plays, and trending books</p>
+</header>
 
-  <!-- Tabs -->
-  <div class="flex justify-center space-x-2 mb-6">
-    <button class="tab-button px-4 py-2 rounded bg-blue-600 text-white" data-tab="fringe" onclick="showTab('fringe')">Fringe Comedians</button>
-    <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="social" onclick="showTab('social')">Social Media Comedians</button>
-    <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="plays" onclick="showTab('plays')">London Plays</button>
-    <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="books" onclick="showTab('books')">BookTok Books</button>
+<!-- Tabs -->
+<div class="flex justify-center space-x-2 mb-6 flex-wrap">
+  <button class="tab-button px-4 py-2 rounded bg-blue-600 text-white" data-tab="fringe" onclick="showTab('fringe')">Fringe Comedians</button>
+  <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="social" onclick="showTab('social')">Social Media Comedians</button>
+  <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="plays" onclick="showTab('plays')">London Plays</button>
+  <button class="tab-button px-4 py-2 rounded bg-gray-200" data-tab="books" onclick="showTab('books')">BookTok Books</button>
+</div>
+
+<!-- Fringe Comedians Tab -->
+<div id="fringe" class="tab-content tab-active px-6">
+  <h2 class="text-xl font-semibold mb-4">Fringe Comedians</h2>
+  <div class="mb-4 flex gap-3 flex-wrap">
+    <input id="fringe-search" placeholder="Search name or show" class="p-2 border rounded w-1/3" />
+    <label class="flex items-center gap-2">Min score:
+      <select id="fringe-minScore" class="p-2 border rounded">
+        <option value="">Any</option>
+        <option>6</option><option>7</option><option>8</option><option>9</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">Sort by:
+      <select id="fringe-sortBy" class="p-2 border rounded">
+        <option value="developPotential">Hype / Develop Potential</option>
+        <option value="soldOutCount">Sold-out count</option>
+        <option value="addedShows">Added shows</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">Order:
+      <select id="fringe-order" class="p-2 border rounded"><option value="desc">Desc</option><option value="asc">Asc</option></select>
+    </label>
+    <button id="fringe-resetBtn" class="px-3 py-2 border rounded">Reset Filters</button>
+    <button id="fringe-downloadCsv" class="px-3 py-2 bg-slate-800 text-white rounded">Download CSV</button>
   </div>
-
-  <!-- Fringe Tab -->
-  <div id="fringe" class="tab-content px-6">
-    <h2 class="text-xl font-semibold mb-4">Fringe Comedians</h2>
-    <table class="min-w-full bg-white border rounded shadow">
-      <thead>
-        <tr class="bg-gray-200">
+  <div class="overflow-auto border rounded bg-white mb-6">
+    <table id="fringe-tbl" class="min-w-full table-auto">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
+          <th>Rank</th>
           <th>Name</th>
           <th>Show</th>
           <th>About</th>
-          <th>Agented?</th>
           <th>Venues</th>
-          <th>Awards</th>
-          <th>Reviews</th>
-          <th>Sold Out</th>
-          <th>Added Shows</th>
+          <th>Agent / Contact</th>
+          <th>Reviews & Clips</th>
+          <th>Sold / Added</th>
+          <th>Score</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Ayo Adenekan</td>
-          <td>Black Mediocrity</td>
-          <td>Personal storytelling, relatability</td>
-          <td>No</td>
-          <td>Monkey Barrel Comedy</td>
-          <td>Best Newcomer Nominee</td>
-          <td>★★★★ Binge Fringe</td>
-          <td>22</td>
-          <td>3</td>
-        </tr>
-        <tr>
-          <td>Amelia Hamilton</td>
-          <td>Forget Me Not</td>
-          <td>Gen-Z rap comedy</td>
-          <td>No</td>
-          <td>Pleasance Courtyard</td>
-          <td>Best Newcomer Shortlist</td>
-          <td>★★★★ Fest</td>
-          <td>10</td>
-          <td>2</td>
-        </tr>
-      </tbody>
+      <tbody id="fringe-tbody"></tbody>
     </table>
-
-    <!-- Google Form Embed -->
-    <div class="p-4 bg-white border rounded my-6 shadow">
-      <h3 class="text-lg font-semibold mb-2">Suggest a Comedian</h3>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" 
-        width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-    </div>
   </div>
+  <div class="p-4 bg-white border rounded my-6 shadow">
+    <h3 class="text-lg font-semibold mb-2">Suggest a Comedian</h3>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="500" frameborder="0">Loading…</iframe>
+  </div>
+</div>
 
-  <!-- Social Media Tab -->
-  <div id="social" class="tab-content px-6 hidden">
-    <h2 class="text-xl font-semibold mb-4">Social Media Comedians</h2>
-    <table class="min-w-full bg-white border rounded shadow">
-      <thead>
-        <tr class="bg-gray-200">
+<!-- Social Media Comedians Tab -->
+<div id="social" class="tab-content px-6">
+  <h2 class="text-xl font-semibold mb-4">Social Media Comedians</h2>
+  <div class="mb-4 flex gap-3 flex-wrap">
+    <input id="social-search" placeholder="Search name or platform" class="p-2 border rounded w-1/3" />
+    <label class="flex items-center gap-2">Sort by:
+      <select id="social-sortBy" class="p-2 border rounded">
+        <option value="followers">Followers</option>
+        <option value="developPotential">Potential</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">Order:
+      <select id="social-order" class="p-2 border rounded"><option value="desc">Desc</option><option value="asc">Asc</option></select>
+    </label>
+    <button id="social-resetBtn" class="px-3 py-2 border rounded">Reset Filters</button>
+    <button id="social-downloadCsv" class="px-3 py-2 bg-slate-800 text-white rounded">Download CSV</button>
+  </div>
+  <div class="overflow-auto border rounded bg-white mb-6">
+    <table id="social-tbl" class="min-w-full table-auto">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
           <th>Name</th>
           <th>Platform</th>
           <th>Followers</th>
           <th>Style</th>
           <th>Links</th>
+          <th>Score / Potential</th>
+          <th>Notes</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Abi Clarke</td>
-          <td>TikTok</td>
-          <td>1M+</td>
-          <td>Relatable sketches</td>
-          <td><a href="https://www.tiktok.com/@abiclarkecomedy" class="text-blue-600">TikTok</a></td>
-        </tr>
-        <tr>
-          <td>Max Fosh</td>
-          <td>YouTube</td>
-          <td>500K+</td>
-          <td>Street interviews</td>
-          <td><a href="https://www.youtube.com/c/MaxFosh" class="text-blue-600">YouTube</a></td>
-        </tr>
-      </tbody>
+      <tbody id="social-tbody"></tbody>
     </table>
-
-    <div class="p-4 bg-white border rounded my-6 shadow">
-      <h3 class="text-lg font-semibold mb-2">Suggest a Social Media Comedian</h3>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" 
-        width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-    </div>
   </div>
+  <div class="p-4 bg-white border rounded my-6 shadow">
+    <h3 class="text-lg font-semibold mb-2">Suggest a Social Media Comedian</h3>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="500" frameborder="0">Loading…</iframe>
+  </div>
+</div>
 
-  <!-- Plays Tab -->
-  <div id="plays" class="tab-content px-6 hidden">
-    <h2 class="text-xl font-semibold mb-4">London Plays</h2>
-    <table class="min-w-full bg-white border rounded shadow">
-      <thead>
-        <tr class="bg-gray-200">
+<!-- London Plays Tab -->
+<div id="plays" class="tab-content px-6">
+  <h2 class="text-xl font-semibold mb-4">London Plays</h2>
+  <div class="mb-4 flex gap-3 flex-wrap">
+    <input id="plays-search" placeholder="Search title, playwright, venue" class="p-2 border rounded w-1/3" />
+    <label class="flex items-center gap-2">Sort by:
+      <select id="plays-sortBy" class="p-2 border rounded">
+        <option value="score">Score / Buzz</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">Order:
+      <select id="plays-order" class="p-2 border rounded"><option value="desc">Desc</option><option value="asc">Asc</option></select>
+    </label>
+    <button id="plays-resetBtn" class="px-3 py-2 border rounded">Reset Filters</button>
+    <button id="plays-downloadCsv" class="px-3 py-2 bg-slate-800 text-white rounded">Download CSV</button>
+  </div>
+  <div class="overflow-auto border rounded bg-white mb-6">
+    <table id="plays-tbl" class="min-w-full table-auto">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
           <th>Title</th>
           <th>Playwright</th>
           <th>Venue</th>
-          <th>About</th>
+          <th>Genre / Style</th>
           <th>Reviews</th>
+          <th>Score / Potential</th>
+          <th>Notes</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>The Effect</td>
-          <td>Lucy Prebble</td>
-          <td>National Theatre</td>
-          <td>Love, science, and clinical drug trials</td>
-          <td>★★★★★ The Guardian</td>
-        </tr>
-        <tr>
-          <td>Cowbois</td>
-          <td>Charlie Josephine</td>
-          <td>Royal Court</td>
-          <td>Queer Western</td>
-          <td>★★★★ The Times</td>
-        </tr>
-      </tbody>
+      <tbody id="plays-tbody"></tbody>
     </table>
-
-    <div class="p-4 bg-white border rounded my-6 shadow">
-      <h3 class="text-lg font-semibold mb-2">Suggest a Play</h3>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSflXbVZyY5wlAd4-qScZOKVY8iYYhsOR65aaGOTetHf1dtVgg/viewform?embedded=true" 
-        width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-    </div>
   </div>
+  <div class="p-4 bg-white border rounded my-6 shadow">
+    <h3 class="text-lg font-semibold mb-2">Suggest a Play</h3>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSflXbVZyY5wlAd4-qScZOKVY8iYYhsOR65aaGOTetHf1dtVgg/viewform?embedded=true" width="100%" height="500" frameborder="0">Loading…</iframe>
+  </div>
+</div>
 
-  <!-- Books Tab -->
-  <div id="books" class="tab-content px-6 hidden">
-    <h2 class="text-xl font-semibold mb-4">BookTok Books</h2>
-    <table class="min-w-full bg-white border rounded shadow">
-      <thead>
-        <tr class="bg-gray-200">
+<!-- BookTok / Trending Books Tab -->
+<div id="books" class="tab-content px-6">
+  <h2 class="text-xl font-semibold mb-4">BookTok / Trending Books</h2>
+  <div class="mb-4 flex gap-3 flex-wrap">
+    <input id="books-search" placeholder="Search title or author" class="p-2 border rounded w-1/3" />
+    <label class="flex items-center gap-2">Sort by:
+      <select id="books-sortBy" class="p-2 border rounded">
+        <option value="score">Popularity / Score</option>
+      </select>
+    </label>
+    <label class="flex items-center gap-2">Order:
+      <select id="books-order" class="p-2 border rounded"><option value="desc">Desc</option><option value="asc">Asc</option></select>
+    </label>
+    <button id="books-resetBtn" class="px-3 py-2 border rounded">Reset Filters</button>
+    <button id="books-downloadCsv" class="px-3 py-2 bg-slate-800 text-white rounded">Download CSV</button>
+  </div>
+  <div class="overflow-auto border rounded bg-white mb-6">
+    <table id="books-tbl" class="min-w-full table-auto">
+      <thead class="bg-gray-100 sticky top-0">
+        <tr>
           <th>Title</th>
           <th>Author</th>
           <th>Genre</th>
-          <th>Why Trending</th>
+          <th>Trending Reason / Notes</th>
           <th>Links</th>
+          <th>Score / Popularity</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Yellowface</td>
-          <td>R.F. Kuang</td>
-          <td>Satirical Drama</td>
-          <td>Huge BookTok buzz, media controversy</td>
-          <td><a href="https://www.tiktok.com/tag/yellowface" class="text-blue-600">TikTok</a></td>
-        </tr>
-        <tr>
-          <td>Fourth Wing</td>
-          <td>Rebecca Yarros</td>
-          <td>Fantasy/Romance</td>
-          <td>Viral dragon fantasy series</td>
-          <td><a href="https://www.tiktok.com/tag/fourthwing" class="text-blue-600">TikTok</a></td>
-        </tr>
-      </tbody>
+      <tbody id="books-tbody"></tbody>
     </table>
-
-    <div class="p-4 bg-white border rounded my-6 shadow">
-      <h3 class="text-lg font-semibold mb-2">Suggest a Book</h3>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" 
-        width="100%" height="700" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-    </div>
   </div>
+  <div class="p-4 bg-white border rounded my-6 shadow">
+    <h3 class="text-lg font-semibold mb-2">Suggest a Book</h3>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="500" frameborder="0">Loading…</iframe>
+  </div>
+</div>
 
+<script>
+// Tab switching
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('tab-active'));
+  document.getElementById(tabId).classList.add('tab-active');
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.replace('bg-blue-600','bg-gray-200'));
+  document.querySelector(`[data-tab="${tabId}"]`).classList.replace('bg-gray-200','bg-blue-600');
+}
+
+// Escape HTML
+function escapeHtml(str){ if(!str && str!==0) return ''; return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+// DATA placeholders (example for fringe; you can add actual data for other tabs)
+const fringeDATA = [
+  {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"Strong local sell-outs; warm, character-led writing — good for live special or pilot development."},
+  {"id":2,"name":"Toussaint Douglass","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management","email":"(agent contact via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material","developPotential":7,"notes":"Inventive stage prop work and distinct voice — good for character-led sketch development."},
+  {"id":3,"name":"Amelia Hamilton","show":"Forget Me Not","about":"Gen-Z rap-comedy hybrid using original music and quick gags.","agent":"Unagented","email":"(see Fringe page)","venues":"Pleasance Courtyard (Attic)","soldOutCount":0,"addedShows":0,"review":"https://www.chortle.co.uk/review/2025/08/01/58633/amelia_hamilton%3A_forget_me_not","clip":"https://www.youtube.com/results?search_query=Amelia+Hamilton+Forget+Me+Not","developPotential":6,"notes":"Musical and character bits could be expanded into sketches or a short-form comedy series."},
+  {"id":4,"name":"Ola Labib","show":"Dispersible","about":"Ex-NHS pharmacist turned comedian: sharp satire about TV industry & diaspora life.","agent":"UTC Artist Management","email":"(publicist via Soho/Theatre listings)","venues":"Soho Theatre / festival circuit","soldOutCount":0,"addedShows":0,"review":"https://sohotheatre.com/events/ola-labib-dispersible/","clip":"https://www.youtube.com/watch?v=K3_oxIzhrF4","developPotential":9,"notes":"Has TV credits and pilot potential; good candidate for scripted comedy development."},
+  {"id":5,"name":"Cat Cohen","show":"Broad Strokes","about":"Cabaret-comedy blend: songs + stand-up and character work with big stagecraft.","agent":"US management Brian Boone at CAA","email":"(via official site)","venues":"Pleasance Courtyard / cabaret slots","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/06/cat-cohen-broad-strokes-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Cat+Cohen+comedy","developPotential":8,"notes":"Strong performer with musical/comedic storytelling — good for live special or hybrid TV format."},
+  {"id":6,"name":"Ayoade Bamgboye","show":"Swings and Roundabouts","about":"A commanding debut mixing accents, character work and dramatic comedy.","agent":"Independent Talent Group","email":"(agent via Independent Talent)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/17/ayoade-bamgboye-swings-and-roundabouts-review-commanding-comics-thrilling-debut","clip":"https://www.edfringe.com/tickets/whats-on/ayoade-bamgboye-swings-and-roundabouts","developPotential":9,"notes":"Best Newcomer buzz and theatrical range — prime for scripted development or character-led pilot."},
+  {"id":7,"name":"Sam Nicoresti","show":"Baby Doomer","about":"High-joke density stand-up with emotional core; deals with trans experience and PTSD.","agent":"Ebdon Management","email":"(via Ebdon)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/16/sam-nicoresti-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Sam+Nicoresti+Baby+Doomer","developPotential":9,"notes":"Major award attention — strong profile for touring, specials and development deals."},
+  {"id":8,"name":"Ryan Mold","show":"Breaking the Mold","about":"Confident storyteller about family, grief and working-class life.","agent":"Unagented","email":"(Fringe / venue contact)","venues":"Hanover Tap / Fringe listings","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/08/29/edfringe-review-ryan-mold-breaking-the-mold/","clip":"https://www.edfringe.com/tickets/whats-on/ryan-mold-breaking-the-mold","developPotential":6,"notes":"Solid audience-work comic who could anchor a live Avalon night or warm up tours."},
+  {"id":9,"name":"Britt Migs","show":"Dolphin Mode","about":"Dark, energetic debut mixing personal trauma and musical staging.","agent":"Unagented","email":"(see Fringe profile)","venues":"Buttercup / Fringe rooms","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/07/31/edfringe-review-britt-migs-dolphin-mode/","clip":"https://www.youtube.com/results?search_query=Britt+Migs+comedy","developPotential":6,"notes":"Strong performative identity; good for alternative cabaret or character shorts."},
+  {"id":10,"name":"Dylan Adler","show":"Haus of Dy-lan","about":"Theatrical musical-comedy with big staging and feminist overtones.","agent":"Sabina Kashi at CAA","email":"(via Fringe listing)","venues":"Various cabaret rooms","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/28/review-haus-of-dy-lan-dylan-adler-edfringe-2025/","clip":"https://www.youtube.com/results?search_query=Dylan+Adler+Haus+of+Dy-lan","developPotential":7,"notes":"Theatrical energy and musical chops — strong candidate for a hybrid comedy-drama short."},
+  {"id":11,"name":"Pedro Leandro","show":"Soft Animal","about":"Polished debut: actor-comic crossover exploring queer identity and validation.","agent":"Independent Talent Group","email":"(via Independent Talent)","venues":"BIGHEAD Comedy / festival slots","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/19/review-pedro-leandro-soft-animal-bighead-comedy-in-association-with-independent-talent-group-edfringe-2025/","clip":"https://www.youtube.com/watch?v=il1KdpeMPK4","developPotential":7,"notes":"Actor/comic crossover — good for scripted comedy-dramas or character series."},
+  {"id":12,"name":"Elouise Eftos","show":"Australia's First Attractive Comedian","about":"Provocative, theatrical debut — feminist and performance-led comedy.","agent":"Century Comedy","email":"(via Fringe listing)","venues":"Pleasance Courtyard (Below)","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/21/elouise-eftos-australias-first-attractive-comedian-review-fabulously-provocative-jokes","clip":"https://www.edfringe.com/tickets/whats-on/elouise-eftos-australias-first-attractive-comedian","developPotential":8,"notes":"Award-winning buzz in Australia — a good candidate for international Avalon showcases."}
+];
+
+// Example placeholders for other tabs
+const socialDATA = [];
+const playsDATA = [];
+const booksDATA = [];
+
+// Generic table render function
+function renderTableGeneric(tbodyId, data, columns) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  data.forEach((row, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = 'border-b hover:bg-gray-50 align-top';
+    const cells = columns.map(col => `<td class="px-3 py-3">${escapeHtml(row[col] ?? '')}</td>`).join('');
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+}
+
+// Render fringe on load
+function renderFringe() {
+  const cols = ["Rank","Name","Show","About","Venues","Agent","Reviews & Clips","Sold / Added","Score"];
+  renderTableGeneric('fringe-tbody', fringeDATA.map((r,i)=>({...r, Rank:i+1})), cols);
+}
+
+renderFringe();
+showTab('fringe');
+</script>
 </body>
 </html>
-
-
