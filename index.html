@@ -38,9 +38,8 @@
     </label>
     <label class="flex items-center gap-2">Sort by:
       <select id="fringe-sortBy" class="p-2 border rounded">
-        <option value="developPotential">Hype / Develop Potential</option>
-        <option value="soldOutCount">Sold-out count</option>
-        <option value="addedShows">Added shows</option>
+        <option value="Score">Hype / Develop Potential</option>
+        <option value="SoldAdded">Sold-out / Added shows</option>
       </select>
     </label>
     <label class="flex items-center gap-2">Order:
@@ -80,8 +79,8 @@
     <input id="social-search" placeholder="Search name or platform" class="p-2 border rounded w-1/3" />
     <label class="flex items-center gap-2">Sort by:
       <select id="social-sortBy" class="p-2 border rounded">
-        <option value="followers">Followers</option>
-        <option value="developPotential">Potential</option>
+        <option value="Followers">Followers</option>
+        <option value="Score">Potential</option>
       </select>
     </label>
     <label class="flex items-center gap-2">Order:
@@ -119,7 +118,7 @@
     <input id="plays-search" placeholder="Search title, playwright, venue" class="p-2 border rounded w-1/3" />
     <label class="flex items-center gap-2">Sort by:
       <select id="plays-sortBy" class="p-2 border rounded">
-        <option value="score">Score / Buzz</option>
+        <option value="Score">Score / Buzz</option>
       </select>
     </label>
     <label class="flex items-center gap-2">Order:
@@ -157,7 +156,7 @@
     <input id="books-search" placeholder="Search title or author" class="p-2 border rounded w-1/3" />
     <label class="flex items-center gap-2">Sort by:
       <select id="books-sortBy" class="p-2 border rounded">
-        <option value="score">Popularity / Score</option>
+        <option value="Score">Popularity / Score</option>
       </select>
     </label>
     <label class="flex items-center gap-2">Order:
@@ -199,48 +198,54 @@ function showTab(tabId) {
 // Escape HTML
 function escapeHtml(str){ if(!str && str!==0) return ''; return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-// Fringe Comedians data
-const DATA = [
-  {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"Strong local sell-outs; warm, character-led writing — good for live special or pilot development."},
-  {"id":2,"name":"Toussaint Douglas","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management","email":"(agent contact via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglas+Accessible+Pigeon+Material","developPotential":7,"notes":"Inventive stage prop work and distinct voice — good for character-led sketch development."},
-  {"id":3,"name":"Amelia Hamilton","show":"Forget Me Not","about":"Gen-Z rap-comedy hybrid using original music and quick gags.","agent":"Unagented","email":"(see Fringe page)","venues":"Pleasance Courtyard (Attic)","soldOutCount":0,"addedShows":0,"review":"https://www.chortle.co.uk/review/2025/08/01/58633/amelia_hamilton%3A_forget_me_not","clip":"https://www.youtube.com/results?search_query=Amelia+Hamilton+Forget+Me+Not","developPotential":6,"notes":"Musical and character bits could be expanded into sketches or a short-form comedy series."},
-  {"id":4,"name":"Ola Labib","show":"Dispersible","about":"Ex-NHS pharmacist turned comedian: sharp satire about TV industry & diaspora life.","agent":"UTC Artist Management","email":"(publicist via Soho/Theatre listings)","venues":"Soho Theatre / festival circuit","soldOutCount":0,"addedShows":0,"review":"https://sohotheatre.com/events/ola-labib-dispersible/","clip":"https://www.youtube.com/watch?v=K3_oxIzhrF4","developPotential":9,"notes":"Has TV credits and pilot potential; good candidate for scripted comedy development."},
-  {"id":5,"name":"Cat Cohen","show":"Broad Strokes","about":"Cabaret-comedy blend: songs + stand-up and character work with big stagecraft.","agent":"US management Brian Boone at CAA","email":"(via official site)","venues":"Pleasance Courtyard / cabaret slots","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/06/cat-cohen-broad-strokes-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Cat+Cohen+comedy","developPotential":8,"notes":"Strong performer with musical/comedic storytelling — good for live special or hybrid TV format."},
-  {"id":6,"name":"Ayoade Bamgboye","show":"Swings and Roundabouts","about":"A commanding debut mixing accents, character work and dramatic comedy.","agent":"Independent Talent Group","email":"(agent via Independent Talent)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/17/ayoade-bamgboye-swings-and-roundabouts-review-commanding-comics-thrilling-debut","clip":"https://www.edfringe.com/tickets/whats-on/ayoade-bamgboye-swings-and-roundabouts","developPotential":9,"notes":"Best Newcomer buzz and theatrical range — prime for scripted development or character-led pilot."},
-  {"id":7,"name":"Sam Nicoresti","show":"Baby Doomer","about":"High-joke density stand-up with emotional core; deals with trans experience and PTSD.","agent":"Ebdon Management","email":"(via Ebdon)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/16/sam-nicoresti-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Sam+Nicoresti+Baby+Doomer","developPotential":9,"notes":"Major award attention — strong profile for touring, specials and development deals."},
-  {"id":8,"name":"Ryan Mold","show":"Breaking the Mold","about":"Confident storyteller about family, grief and working-class life.","agent":"Unagented","email":"(Fringe / venue contact)","venues":"Hanover Tap / Fringe listings","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/08/29/edfringe-review-ryan-mold-breaking-the-mold/","clip":"https://www.edfringe.com/tickets/whats-on/ryan-mold-breaking-the-mold","developPotential":6,"notes":"Solid audience-work comic who could anchor a live Avalon night or warm up tours."},
-  {"id":9,"name":"Britt Migs","show":"Dolphin Mode","about":"Dark, energetic debut mixing personal trauma and musical staging.","agent":"Unagented","email":"(see Fringe profile)","venues":"Buttercup / Fringe rooms","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/07/31/edfringe-review-britt-migs-dolphin-mode/","clip":"https://www.youtube.com/results?search_query=Britt+Migs+comedy","developPotential":6,"notes":"Strong performative identity; good for alternative cabaret or character shorts."},
-  {"id":10,"name":"Dylan Adler","show":"Haus of Dy-lan","about":"Theatrical musical-comedy with big staging and feminist overtones.","agent":"Sabina Kashi at CAA","email":"(via Fringe listing)","venues":"Various cabaret rooms","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/28/review-haus-of-dy-lan-dylan-adler-edfringe-2025/","clip":"https://www.youtube.com/results?search_query=Dylan+Adler+Haus+of+Dy-lan","developPotential":7,"notes":"Theatrical energy and musical chops — strong candidate for a hybrid comedy-drama short."},
-  {"id":11,"name":"Pedro Leandro","show":"Soft Animal","about":"Polished debut: actor-comic crossover exploring queer identity and validation.","agent":"Independent Talent Group","email":"(via Independent Talent)","venues":"BIGHEAD Comedy / festival slots","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/19/review-pedro-leandro-soft-animal-bighead-comedy-in-association-with-independent-talent-group-edfringe-2025/","clip":"https://www.youtube.com/watch?v=il1KdpeMPK4","developPotential":7,"notes":"Actor/comic crossover — good for scripted comedy-dramas or character series."},
-  {"id":12,"name":"Elouise Eftos","show":"Australia's First Attractive Comedian","about":"Provocative, theatrical debut — feminist and performance-led comedy.","agent":"Century Comedy","email":"(via Fringe listing)","venues":"Pleasance Courtyard (Below)","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/21/elouise-eftos-australias-first-attractive-comedian-review-fabulously-provocative-jokes","clip":"https://www.edfringe.com/tickets/whats-on/elouise-eftos-australias-first-attractive-comedian","developPotential":8,"notes":"Award-winning buzz in Australia — a good candidate for international Avalon showcases."}
+// --- Data arrays ---
+const fringeDATA = [
+  {"Rank":1,"Name":"Ayo Adenekan","Show":"Black Mediocrity","About":"Personal storytelling, relatability","Venues":"Monkey Barrel / The Tron","Agent":"Unagented / ayoadenekan767@gmail.com","ReviewsClips":"<a href='https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/' target='_blank'>Review</a> | <a href='https://www.tiktok.com/@zai_swanzy/video/7539470786516634902' target='_blank'>Clip</a>","SoldAdded":"22 / 3","Score":8},
+  {"Rank":2,"Name":"Toussaint Douglass","Show":"Accessible Pigeon Material","About":"Eccentric, prop-driven debut","Venues":"Pleasance Courtyard / Bunker One","Agent":"UTC Artist Management","ReviewsClips":"<a href='https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":7},
+  {"Rank":3,"Name":"Amelia Hamilton","Show":"Forget Me Not","About":"Gen-Z comedy, rap comedy","Venues":"Pleasance Courtyard (Attic)","Agent":"Unagented","ReviewsClips":"<a href='https://www.chortle.co.uk/review/2025/08/01/58633/amelia_hamilton%3A_forget_me_not' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Amelia+Hamilton+Forget+Me+Not' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":6},
+  {"Rank":4,"Name":"Ola Labib","Show":"Dispersible","About":"Ex-NHS pharmacist turned comedian","Venues":"Soho Theatre / festival circuit","Agent":"UTC Artist Management","ReviewsClips":"<a href='https://sohotheatre.com/events/ola-labib-dispersible/' target='_blank'>Review</a> | <a href='https://www.youtube.com/watch?v=K3_oxIzhrF4' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":9},
+  {"Rank":5,"Name":"Cat Cohen","Show":"Broad Strokes","About":"Cabaret-comedy blend","Venues":"Pleasance Courtyard / cabaret slots","Agent":"US management Brian Boone at CAA","ReviewsClips":"<a href='https://www.theguardian.com/stage/2025/aug/06/cat-cohen-broad-strokes-review-pleasance-courtyard-edinburgh' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Cat+Cohen+comedy' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":8},
+  {"Rank":6,"Name":"Ayoade Bamgboye","Show":"Swings and Roundabouts","About":"Mixing accents, character work and dramatic comedy","Venues":"Pleasance Courtyard","Agent":"Independent Talent Group","ReviewsClips":"<a href='https://www.theguardian.com/stage/2025/aug/17/ayoade-bamgboye-swings-and-roundabouts-review-commanding-comics-thrilling-debut' target='_blank'>Review</a> | <a href='https://www.edfringe.com/tickets/whats-on/ayoade-bamgboye-swings-and-roundabouts' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":9},
+  {"Rank":7,"Name":"Sam Nicoresti","Show":"Baby Doomer","About":"High-joke density stand-up","Venues":"Pleasance Courtyard","Agent":"Ebdon Management","ReviewsClips":"<a href='https://www.theguardian.com/stage/2025/aug/16/sam-nicoresti-review-pleasance-courtyard-edinburgh' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Sam+Nicoresti+Baby+Doomer' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":9},
+  {"Rank":8,"Name":"Ryan Mold","Show":"Breaking the Mold","About":"Confident storyteller about family, grief and working-class life","Venues":"Hanover Tap / Fringe listings","Agent":"Unagented","ReviewsClips":"<a href='https://theqr.co.uk/2025/08/29/edfringe-review-ryan-mold-breaking-the-mold/' target='_blank'>Review</a> | <a href='https://www.edfringe.com/tickets/whats-on/ryan-mold-breaking-the-mold' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":6},
+  {"Rank":9,"Name":"Britt Migs","Show":"Dolphin Mode","About":"Dark, energetic debut mixing personal trauma and musical staging","Venues":"Buttercup / Fringe rooms","Agent":"Unagented","ReviewsClips":"<a href='https://theqr.co.uk/2025/07/31/edfringe-review-britt-migs-dolphin-mode/' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Britt+Migs+comedy' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":6},
+  {"Rank":10,"Name":"Dylan Adler","Show":"Haus of Dy-lan","About":"Theatrical musical-comedy","Venues":"Various cabaret rooms","Agent":"Sabina Kashi at CAA","ReviewsClips":"<a href='https://www.bingefringe.com/2025/08/28/review-haus-of-dy-lan-dylan-adler-edfringe-2025/' target='_blank'>Review</a> | <a href='https://www.youtube.com/results?search_query=Dylan+Adler+Haus+of+Dy-lan' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":7},
+  {"Rank":11,"Name":"Pedro Leandro","Show":"Soft Animal","About":"Actor-comic crossover exploring queer identity","Venues":"BIGHEAD Comedy / festival slots","Agent":"Independent Talent Group","ReviewsClips":"<a href='https://www.bingefringe.com/2025/08/19/review-pedro-leandro-soft-animal-bighead-comedy-in-association-with-independent-talent-group-edfringe-2025/' target='_blank'>Review</a> | <a href='https://www.youtube.com/watch?v=il1KdpeMPK4' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":7},
+  {"Rank":12,"Name":"Elouise Eftos","Show":"Australia's First Attractive Comedian","About":"Provocative, theatrical debut","Venues":"Pleasance Courtyard (Below)","Agent":"Century Comedy","ReviewsClips":"<a href='https://www.theguardian.com/stage/2025/aug/21/elouise-eftos-australias-first-attractive-comedian-review-fabulously-provocative-jokes' target='_blank'>Review</a> | <a href='https://www.edfringe.com/tickets/whats-on/elouise-eftos-australias-first-attractive-comedian' target='_blank'>Clip</a>","SoldAdded":"— / —","Score":8}
 ];
 
-// Example placeholders for other tabs
-const socialDATA = [];
-const playsDATA = [];
-const booksDATA = [];
+// Placeholder arrays for social, plays, books (simplified example)
+const socialDATA = [
+  {"Name":"Lola TikTok","Platform":"TikTok","Followers":"150k","Style":"Sketch & improv","Links":"<a href='#'>TikTok</a>","Score":7,"Notes":"Rising sketch star"},
+  {"Name":"Max Insta","Platform":"Instagram","Followers":"120k","Style":"Stand-up clips","Links":"<a href='#'>Instagram</a>","Score":6,"Notes":"Good engagement"}
+];
+const playsDATA = [
+  {"Title":"The Mirror Room","Playwright":"Jane Doe","Venue":"National Theatre","Genre":"Drama","Reviews":"<a href='#'>Review</a>","Score":8,"Notes":"Critically acclaimed"},
+  {"Title":"Laugh Lines","Playwright":"John Smith","Venue":"King's Head","Genre":"Comedy","Reviews":"<a href='#'>Review</a>","Score":7,"Notes":"Popular with audiences"}
+];
+const booksDATA = [
+  {"Title":"The Viral Life","Author":"Alice Page","Genre":"Contemporary","Trending":"BookTok buzz","Links":"<a href='#'>Buy</a>","Score":8},
+  {"Title":"Haunted Nights","Author":"Mark Eves","Genre":"Horror","Trending":"Social media hype","Links":"<a href='#'>Buy</a>","Score":7}
+];
 
-// Generic table render function
-function renderTableGeneric(tbodyId, data, columns) {
-  const tbody = document.getElementById(tbodyId);
-  tbody.innerHTML = '';
-  data.forEach((row, idx) => {
-    const tr = document.createElement('tr');
-    tr.className = 'border-b hover:bg-gray-50 align-top';
-    const cells = columns.map(col => `<td class="px-3 py-3">${escapeHtml(row[col] ?? '')}</td>`).join('');
-    tr.innerHTML = cells;
+// Populate function
+function populateTableById(tbodyId,data){
+  const tbody=document.getElementById(tbodyId);
+  tbody.innerHTML="";
+  data.forEach(row=>{
+    const tr=document.createElement('tr');
+    tr.className="border-b hover:bg-gray-50 align-top";
+    tr.innerHTML=Object.values(row).map(val=>`<td class="px-3 py-3">${val}</td>`).join('');
     tbody.appendChild(tr);
   });
 }
 
-// Render fringe on load
-function renderFringe() {
-  const cols = ["Rank","Name","Show","About","Venues","Agent","Reviews & Clips","Sold / Added","Score"];
-  renderTableGeneric('fringe-tbody', fringeDATA.map((r,i)=>({...r, Rank:i+1})), cols);
-}
+// Initial populate
+populateTableById("fringe-tbody",fringeDATA);
+populateTableById("social-tbody",socialDATA);
+populateTableById("plays-tbody",playsDATA);
+populateTableById("books-tbody",booksDATA);
 
-renderFringe();
-showTab('fringe');
 </script>
 </body>
 </html>
