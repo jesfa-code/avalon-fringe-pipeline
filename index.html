@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Avalon Talent Pipeline — Galactic (with intro + toggles)</title>
+  <title>Avalon Talent Pipeline — Galactic (refined intro + controls)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ========= THEME & LAYOUT ========= */
     :root{
       --bg-1:#040613;
       --bg-2:#23123b;
@@ -32,13 +31,12 @@
     thead{backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(15,23,36,0.6), rgba(15,23,36,0.4))}
     .json-edit{width:100%;height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px;background:#071023;color:#dbeafe;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04)}
     .btn-accent{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#02111a;font-weight:600;padding:8px 12px;border-radius:8px;border:none}
-    /* logo */
     .avalon-logo{width:220px;height:56px;display:block;cursor:pointer}
     .logo-wrap{display:flex;align-items:center;gap:12px}
     .logo-glow{filter:drop-shadow(0 6px 16px rgba(139,92,246,0.18)) drop-shadow(0 2px 6px rgba(6,182,212,0.06));transition:transform .18s,filter .18s}
     .logo-wrap:hover .logo-glow{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 10px 30px rgba(139,92,246,0.28)) drop-shadow(0 4px 12px rgba(6,182,212,0.12))}
 
-    /* ========= NEBULA & STARS ========= */
+    /* NEBULA & STARS */
     .nebula{position:fixed;inset:-10% -10% auto -10%;height:70vh;z-index:0;pointer-events:none;
       background:
         radial-gradient(40% 30% at 10% 40%, rgba(139,92,246,0.18), transparent 20%),
@@ -47,7 +45,6 @@
       mix-blend-mode:screen;filter:blur(48px) saturate(110%);opacity:var(--nebula-opacity);transform:translateZ(0);animation:nebMove 28s linear infinite alternate;
     }
     @keyframes nebMove{0%{transform:translate(-2%,-1%) scale(1)}100%{transform:translate(2%,1%) scale(1.03)}}
-
     .stars-static{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:
       radial-gradient(1px 1px at 5% 12%, rgba(255,255,255,0.06), transparent 40%),
       radial-gradient(1px 1px at 18% 48%, rgba(255,255,255,0.04), transparent 40%),
@@ -82,61 +79,68 @@
     @keyframes twinkleFast{0%{opacity:calc(var(--twinkle-opacity)*0.1);transform:scale(.9)}45%{opacity:var(--twinkle-opacity);transform:scale(1.12)}100%{opacity:calc(var(--twinkle-opacity)*0.15);transform:scale(1)}}
     @keyframes drift{from{background-position:0 0} to{background-position:1400px -600px}}
 
-    /* ========= INTRO ANIMATION =========
-       Sequence:
-         0 - 0.12s  : full-screen white flash
-         0.12 - 0.45s: thin horizontal white line appears (flicker)
-         0.45 - 1.1s : line "stretches/explodes" into radial expansion + fade-out revealing homepage
-    */
+    /* INTRO: dot -> thin flickering line -> smaller, softened burst (shorter overall) */
     .intro-overlay{position:fixed;inset:0;z-index:9999;background:transparent;display:flex;align-items:center;justify-content:center;pointer-events:none}
-    .intro-flash{position:absolute;inset:0;background:white;opacity:0;animation:flashAnim .9s ease-in-out forwards}
-    .intro-line{position:absolute;height:2px;width:10%;background:white;opacity:0;filter:drop-shadow(0 6px 14px rgba(255,255,255,0.12));animation:lineAnim 1.05s ease-in-out forwards}
-    .intro-burst{position:absolute;border-radius:50%;width:120px;height:120px;background:radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(139,92,246,0.2) 30%, rgba(6,182,212,0.06) 65%, transparent 100%);opacity:0;transform:scale(.2);animation:burstAnim 1.05s ease-in-out forwards}
-    @keyframes flashAnim{
-      0%{opacity:0} 6%{opacity:1} 12%{opacity:0} 100%{opacity:0}
+    .intro-dot{ position:absolute; width:8px; height:8px; border-radius:50%; background: white; box-shadow:0 0 14px rgba(255,255,255,0.85), 0 0 28px rgba(139,92,246,0.12); opacity:0; transform:scale(0.2); animation:dotPulse .6s ease-in-out forwards; will-change: transform, opacity; }
+    .intro-line{ position:absolute; height:2px; background:rgba(255,255,255,0.95); width:6%; left:47%; top:50%; transform-origin:left center; opacity:0; filter:drop-shadow(0 8px 18px rgba(255,255,255,0.08)); animation:lineGrow .75s cubic-bezier(.2,.9,.2,1) forwards; will-change: width, opacity, transform; }
+    .intro-line::after{ content:""; position:absolute; inset:-4px -6px; background:linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0)); opacity:0; animation:lineFlicker .75s ease-in-out forwards; }
+    .intro-burst{ position:absolute; border-radius:50%; width:16px; height:16px; background:radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.45) 28%, rgba(139,92,246,0.12) 55%, rgba(6,182,212,0.02) 80%, transparent 100%); opacity:0; transform:scale(.18); filter:blur(4px); animation:burstShow .65s cubic-bezier(.2,.95,.2,1) forwards; will-change: transform, opacity, filter; }
+
+    @keyframes dotPulse {
+      0% { opacity:0; transform:scale(.2); }
+      8% { opacity:1; transform:scale(1); }
+      30% { opacity:0.9; transform:scale(1.12) }
+      46% { opacity:0.6; transform:scale(.85) }
+      60% { opacity:0.2; transform:scale(.45) }
+      75% { opacity:0; transform:scale(.3) }
+      100%{ opacity:0; transform:scale(.3) }
     }
-    @keyframes lineAnim{
-      0%{opacity:0; width:2%}
-      12%{opacity:1; width:14%}
-      28%{opacity:0.95; transform:translateX(0)}
-      40%{opacity:1}
-      45%{width:100%; transform:scaleX(1); border-radius:0}
-      70%{opacity:0.9}
-      100%{opacity:0; transform:scale(32)}
+    @keyframes lineGrow {
+      0% { opacity:0; width:6%; transform:translateX(0) scaleX(0.02) }
+      22% { opacity:1; width:14%; transform:scaleX(0.25) }
+      38% { width:40%; transform:scaleX(0.7) }
+      54% { width:78%; transform:scaleX(1.0) }
+      68% { width:100%; transform:scaleX(1.02) }
+      85% { opacity:1; transform:scaleX(1.0) }
+      100% { opacity:0; transform:scale(26); }
     }
-    @keyframes burstAnim{
-      0%{opacity:0; transform:scale(.18)}
-      45%{opacity:1; transform:scale(1)}
-      70%{opacity:0.85; transform:scale(10)}
-      100%{opacity:0; transform:scale(36)}
+    @keyframes lineFlicker {
+      0% { opacity:0 }
+      18%{ opacity:1 }
+      36%{ opacity:0.6 }
+      52%{ opacity:1 }
+      70%{ opacity:0.6 }
+      100%{ opacity:0 }
+    }
+    @keyframes burstShow {
+      0% { opacity:0; transform:scale(.18); filter:blur(4px) }
+      48% { opacity:0.85; transform:scale(.95); filter:blur(2px) }
+      70% { opacity:0.6; transform:scale(5); filter:blur(6px) }
+      100% { opacity:0; transform:scale(32); filter:blur(12px) }
     }
 
-    /* ========= PRESENTATION MODE ========= */
+    /* presentation tweaks */
     body.presentation h1{font-size:2.6rem}
     body.presentation .home-card{transform:none;box-shadow:none}
     body.presentation .container{max-width:1400px;padding:36px}
     body.presentation .json-edit{height:320px}
     body.presentation .avalon-logo{width:320px}
-    /* Minor performance safe-areas */
     @media (max-width:640px){ .container{padding:18px} .avalon-logo{width:160px;height:48px} }
-
   </style>
 </head>
 <body>
-  <!-- Nebula + star layers -->
   <div class="nebula" id="nebulaLayer" aria-hidden="true"></div>
   <div class="stars-static" id="staticStars" aria-hidden="true"></div>
   <div class="twinkles" id="twinkleLayer" aria-hidden="true"></div>
 
   <!-- Intro overlay -->
   <div id="intro" class="intro-overlay" aria-hidden="true">
-    <div class="intro-flash" id="introFlash"></div>
-    <div class="intro-line" id="introLine" style="top:50%;left:45%;"></div>
-    <div class="intro-burst" id="introBurst" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    <div id="introDot" class="intro-dot" style="left:49%; top:50%;"></div>
+    <div id="introLine" class="intro-line" style="left:0%; top:50%;"></div>
+    <div id="introBurst" class="intro-burst" style="left:50%; top:50%; transform:translate(-50%,-50%);"></div>
   </div>
 
-  <div class="container content-layer" id="mainContent" aria-hidden="true" style="opacity:0;transition:opacity .6s ease;">
-    <!-- header -->
+  <div class="container content-layer" id="mainContent" aria-hidden="true" style="opacity:0;visibility:hidden;transition:opacity .4s ease, visibility .01s linear .4s;">
     <header class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-4">
         <div class="logo-wrap" onclick="navigate('home')" title="Avalon — click to go home" role="button">
@@ -168,6 +172,7 @@
         </div>
 
         <button id="presentationBtn" class="px-3 py-2 rounded border">Presentation</button>
+        <button id="replayIntroBtn" class="px-3 py-2 rounded border">Replay Intro</button>
         <button id="exportBtn" class="px-3 py-2 rounded border">Export JSON</button>
         <button id="goHome" class="btn-accent">Home</button>
         <button id="openAdminBtn" class="px-3 py-2 rounded border border-white/10">Admin</button>
@@ -383,7 +388,7 @@
           <p>A mockumentary-sketch hybrid set inside a fictional social-platform where influencers and creators churn out viral content — deadpan satire with short-form clips built for TikTok/YouTube and a 20–25 minute broadcast strand.</p>
 
           <h3 class="font-semibold mt-3">Background / Rationale</h3>
-          <p>Influencer-driven comedians are tastemakers for Gen-Z — the UK is missing a modern sketch-mockumentary that is digital-first. Use social KPIs + sizzle to de-risk commissioning.</p>
+          <p>Influencer-driven comedians are tastemakers for Gen-Z — the UK is missing a modern sketch-mockumentary that is digital-first. Use social KPIs + sizzle to de-risk commissioning. (Example reference: BBCTHREE topical documentary strands & social-first formats.)</p>
 
           <h3 class="font-semibold mt-3">Talent (examples)</h3>
           <p>Munya Chawawa, Safro, Joa-style creators + recent fringe comics (Ayo Adenekan, Ayoade Bamgboye, Sam Nicoresti, etc.).</p>
@@ -450,9 +455,7 @@
   </div>
 
 <script>
-/* ========= DATA =========
-   same built-in datasets (fringe/social/plays/books)
-*/
+/* ========== Built-in data (same as before) ========== */
 const BUILTIN_fringe = [
   {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"<span class='small-italic'>Strong local sell-outs; warm, character-led writing — good for live special or pilot development.</span>"},
   {"id":2,"name":"Toussaint Douglass","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management","email":"(agent contact via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material","developPotential":7,"notes":"<span class='small-italic'>Inventive stage prop work and distinct voice — good for character-led sketch development.</span>"},
@@ -484,32 +487,31 @@ const BUILTIN_books = [
   {"id":2,"title":"The Viral Life","author":"Alice Page","genre":"Contemporary","trending":"BookTok microfiction trend","links":"#","Score":7}
 ];
 
-/* ========= localStorage helpers & seeding ========= */
+/* localStorage helpers & seeding */
 const STORAGE_PREFIX = 'avalon_pipeline_v1_';
 function saveToLocal(key,val){ try{ localStorage.setItem(STORAGE_PREFIX+key, JSON.stringify(val)); }catch(e){ console.warn(e); } }
 function loadFromLocal(key){ try{ const r = localStorage.getItem(STORAGE_PREFIX+key); return r ? JSON.parse(r) : null; }catch(e){ console.warn(e); return null; } }
 function resetBuiltIn(){ saveToLocal('fringe', BUILTIN_fringe); saveToLocal('social', BUILTIN_social); saveToLocal('plays', BUILTIN_plays); saveToLocal('books', BUILTIN_books); loadAllAndRender(); }
 if(!loadFromLocal('fringe')) resetBuiltIn();
 
-/* ========= runtime arrays ========= */
+/* runtime arrays */
 let fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice();
 let socialDATA = loadFromLocal('social') || BUILTIN_social.slice();
 let playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice();
 let booksDATA = loadFromLocal('books') || BUILTIN_books.slice();
 
-/* ========= rendering helpers ========= */
+/* rendering helpers */
 function renderFringeTable(rows){ const tbody=document.getElementById('fringe-body'); tbody.innerHTML=''; rows.forEach((r,idx)=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3">${idx+1}</td><td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3 italic">${r.show||''}</td><td class="px-3 py-3 max-w-xs">${r.about||''}<div class="mt-1">${r.notes||''}</div></td><td class="px-3 py-3">${r.venues||''}</td><td class="px-3 py-3">${r.agent||''}<div class="text-sm">${r.email||''}</div></td><td class="px-3 py-3"><div class="flex flex-col gap-1">${r.review?`<a class="link" target="_blank" href="${r.review}">Read review</a>`:''}${r.clip?`<a class="link" target="_blank" href="${r.clip}">Watch clip</a>`:''}</div></td><td class="px-3 py-3">${(r.soldOutCount||'—')} / ${(r.addedShows||'—')}</td><td class="px-3 py-3">${r.developPotential ?? ''}</td>`; tbody.appendChild(tr); });}
 function renderSocialTable(rows){ const tbody=document.getElementById('social-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3">${r.platform||''}</td><td class="px-3 py-3">${r.followers||''}</td><td class="px-3 py-3">${r.style||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
 function renderPlaysTable(rows){ const tbody=document.getElementById('plays-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.playwright||''}</td><td class="px-3 py-3">${r.director||''}</td><td class="px-3 py-3">${r.theatre||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.reviews?`<a class="link" href="${r.reviews}" target="_blank">Read</a>`:''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
 function renderBooksTable(rows){ const tbody=document.getElementById('books-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.author||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.trending||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td>`; tbody.appendChild(tr); });}
-
 function loadAllAndRender(){ fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice(); socialDATA = loadFromLocal('social') || BUILTIN_social.slice(); playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice(); booksDATA = loadFromLocal('books') || BUILTIN_books.slice(); applyFringeFilters(); renderSocialTable(socialDATA); renderPlaysTable(playsDATA); renderBooksTable(booksDATA); }
 
-/* ========= filtering + CSV ========= */
+/* filtering + CSV */
 function applyFringeFilters(){ const q=(document.getElementById('fringe-search').value||'').toLowerCase(); const minScore=Number(document.getElementById('fringe-minScore').value)||0; const sortBy=document.getElementById('fringe-sortBy').value; const order=document.getElementById('fringe-order').value; let rows=(fringeDATA||[]).filter(r => (r.name||'').toLowerCase().includes(q) || (r.show||'').toLowerCase().includes(q)); rows = rows.filter(r => (r.developPotential || 0) >= minScore); rows.sort((a,b)=>{ const get=(o)=> sortBy==='developPotential' ? (o.developPotential||0) : (sortBy==='soldOutCount' ? (o.soldOutCount||0) : (o.addedShows||0)); const A=get(a), B=get(b); return order==='desc' ? (B-A) : (A-B); }); renderFringeTable(rows); }
 function downloadCsvFromArray(filename, header, rows){ const csvRows=[header].concat(rows.map(r => header.map(h => { const key = {'Name':'name','Show':'show','About':'about','Agent / Email':'agent','Venues':'venues','Review / Clip':'review','Sold / Added':'soldAdded','Score':'developPotential','Notes':'notes','Title':'title','Playwright':'playwright','Director':'director','Theatre':'theatre','Genre':'genre','Reviews':'reviews','Followers':'followers','Platform':'platform','Links':'links','Author':'author'}[h]||h); return String(r[key] ?? '').replace(/"/g,'""'); }))); const csv = csvRows.map(r => r.map(c => `"${c}"`).join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
 
-/* ========= UI wiring ========= */
+/* UI wiring */
 document.getElementById('fringe-search').addEventListener('input', applyFringeFilters);
 document.getElementById('fringe-minScore').addEventListener('change', applyFringeFilters);
 document.getElementById('fringe-sortBy').addEventListener('change', applyFringeFilters);
@@ -536,96 +538,162 @@ document.getElementById('books-csv').addEventListener('click', ()=>{ downloadCsv
 /* initial render */
 loadAllAndRender();
 
-/* ========= navigation ========= */
+/* navigation */
 function navigate(id){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active')); const el=document.getElementById(id); if(el) el.classList.add('section-active'); history.pushState(null,'','#'+id); window.scrollTo({top:0,behavior:'smooth'}); }
 document.querySelectorAll('a[href^="#"]').forEach(a=> a.addEventListener('click', (e)=>{ e.preventDefault(); const t=a.getAttribute('href').slice(1); navigate(t); }));
 document.getElementById('goHome').addEventListener('click', ()=> navigate('home'));
-window.addEventListener('load', ()=>{ /* nothing here - intro controls final reveal */ });
 
-/* ========= ADMIN MODAL ========= */
+/* Admin modal wiring */
 const ADMIN_PASSWORD = 'avalon-intern-2025';
 document.getElementById('openAdminBtn').addEventListener('click', ()=>{ const p = prompt('Enter admin password to edit data (local only):'); if(p === ADMIN_PASSWORD) openAdmin(); else if(p!==null) alert('Wrong password.'); });
 function openAdmin(){ document.getElementById('adminFringe').value = JSON.stringify(fringeDATA,null,2); document.getElementById('adminSocial').value = JSON.stringify(socialDATA,null,2); document.getElementById('adminPlays').value = JSON.stringify(playsDATA,null,2); document.getElementById('adminBooks').value = JSON.stringify(booksDATA,null,2); document.getElementById('adminModal').style.display='flex'; }
 document.getElementById('adminClose').addEventListener('click', ()=>{ document.getElementById('adminModal').style.display='none'; });
 document.getElementById('adminReset').addEventListener('click', ()=>{ if(confirm('Reset local data to built-in defaults?')) resetBuiltIn(); });
-
 document.getElementById('saveFringe').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminFringe').value); fringeDATA = val; saveToLocal('fringe', fringeDATA); applyFringeFilters(); alert('Fringe saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
 document.getElementById('loadFringe').addEventListener('click', ()=> document.getElementById('adminFringe').value = JSON.stringify(loadFromLocal('fringe') || fringeDATA, null, 2));
-
 document.getElementById('saveSocial').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminSocial').value); socialDATA = val; saveToLocal('social', socialDATA); renderSocialTable(socialDATA); alert('Social saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
 document.getElementById('loadSocial').addEventListener('click', ()=> document.getElementById('adminSocial').value = JSON.stringify(loadFromLocal('social') || socialDATA, null, 2));
-
 document.getElementById('savePlays').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminPlays').value); playsDATA = val; saveToLocal('plays', playsDATA); renderPlaysTable(playsDATA); alert('Plays saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
 document.getElementById('loadPlays').addEventListener('click', ()=> document.getElementById('adminPlays').value = JSON.stringify(loadFromLocal('plays') || playsDATA, null, 2));
-
 document.getElementById('saveBooks').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminBooks').value); booksDATA = val; saveToLocal('books', booksDATA); renderBooksTable(booksDATA); alert('Books saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
 document.getElementById('loadBooks').addEventListener('click', ()=> document.getElementById('adminBooks').value = JSON.stringify(loadFromLocal('books') || booksDATA, null, 2));
 
-/* ========= Effects toggle UI ========= */
+/* Effects toggle UI */
 const effectsToggleBtn = document.getElementById('effectsToggleBtn');
 const effectsMenu = document.getElementById('effectsMenu');
 const nebulaCheckbox = document.getElementById('nebulaCheckbox');
 const twinkleCheckbox = document.getElementById('twinkleCheckbox');
 const starsCheckbox = document.getElementById('starsCheckbox');
-
 effectsToggleBtn.addEventListener('click', ()=> { effectsMenu.style.display = effectsMenu.style.display === 'block' ? 'none' : 'block'; });
 
-/* load saved effects state or defaults */
 const effectsState = loadFromLocal('effectsState') || { nebula:true, twinkles:true, stars:true, presentation:false };
 nebulaCheckbox.checked = effectsState.nebula; twinkleCheckbox.checked = effectsState.twinkles; starsCheckbox.checked = effectsState.stars;
 applyEffectsFromState();
-
 nebulaCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
 twinkleCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
 starsCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
-
 function saveEffectsState(){ const s = { nebula:nebulaCheckbox.checked, twinkles:twinkleCheckbox.checked, stars:starsCheckbox.checked, presentation: document.body.classList.contains('presentation') }; saveToLocal('effectsState', s); }
-function applyEffectsFromState(){
-  document.getElementById('nebulaLayer').style.display = nebulaCheckbox.checked ? 'block' : 'none';
-  document.getElementById('twinkleLayer').style.display = twinkleCheckbox.checked ? 'block' : 'none';
-  document.getElementById('staticStars').style.display = starsCheckbox.checked ? 'block' : 'none';
-}
+function applyEffectsFromState(){ document.getElementById('nebulaLayer').style.display = nebulaCheckbox.checked ? 'block' : 'none'; document.getElementById('twinkleLayer').style.display = twinkleCheckbox.checked ? 'block' : 'none'; document.getElementById('staticStars').style.display = starsCheckbox.checked ? 'block' : 'none'; }
 
-/* ========= Presentation mode toggle ========= */
+/* Presentation toggle */
 const presentationBtn = document.getElementById('presentationBtn');
 presentationBtn.addEventListener('click', ()=>{ const now = document.body.classList.toggle('presentation'); presentationBtn.textContent = now ? 'Presentation ✓' : 'Presentation'; saveEffectsState(); });
 
-/* ========= Export JSON snapshot ========= */
+/* Export JSON */
 document.getElementById('exportBtn').addEventListener('click', ()=>{ const snapshot = { exportedAt: new Date().toISOString(), fringe: fringeDATA, social: socialDATA, plays: playsDATA, books: booksDATA }; const blob = new Blob([JSON.stringify(snapshot,null,2)], { type:'application/json' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download = `avalon_pipeline_snapshot_${(new Date()).toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); });
 
-/* ========= Intro animation control ========= */
-const intro = document.getElementById('intro');
-const mainContent = document.getElementById('mainContent');
-function playIntroAndReveal(){
-  // ensure intro visible and content hidden while playing
-  intro.style.display='flex';
+/* Robust intro + reveal with replay control */
+function revealMainContent(force){
+  try{
+    const intro = document.getElementById('intro');
+    const mainContent = document.getElementById('mainContent');
+    if(intro){ intro.style.display = 'none'; intro.style.visibility='hidden'; intro.style.pointerEvents='none'; }
+    if(mainContent){
+      mainContent.style.visibility = 'visible';
+      mainContent.style.pointerEvents = 'auto';
+      setTimeout(()=> { mainContent.style.opacity = '1'; }, 20);
+      mainContent.removeAttribute('aria-hidden');
+    }
+    const target = (location.hash || '#home').slice(1);
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('section-active'));
+    const dest = document.getElementById(target) || document.getElementById('home');
+    if(dest) dest.classList.add('section-active');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    console.info('Intro: site revealed');
+  } catch (err){
+    console.error('Intro reveal error:', err);
+    try{ document.getElementById('intro').style.display='none'; }catch(e){} try{ document.getElementById('mainContent').style.opacity='1'; }catch(e){} try{ document.getElementById('home').classList.add('section-active'); }catch(e){}
+  }
+}
+
+function resetIntroAnimations(){
+  const dot = document.getElementById('introDot');
+  const line = document.getElementById('introLine');
+  const burst = document.getElementById('introBurst');
+  if(dot){ dot.style.animation = 'none'; /* force reflow */ void dot.offsetWidth; }
+  if(line){ line.style.animation = 'none'; void line.offsetWidth; }
+  if(burst){ burst.style.animation = 'none'; void burst.offsetWidth; }
+  // clear inline styles for fresh start
+  if(dot){ dot.style.opacity = 0; dot.style.transform = 'scale(.2)'; }
+  if(line){ line.style.opacity = 0; line.style.width = '6%'; line.style.left = '47%'; }
+  if(burst){ burst.style.opacity = 0; burst.style.transform = 'scale(.18)'; }
+}
+
+function playIntroAndReveal(ignoreSeen=false){
+  const intro = document.getElementById('intro');
+  const mainContent = document.getElementById('mainContent');
+  const dot = document.getElementById('introDot');
+  const line = document.getElementById('introLine');
+  const burst = document.getElementById('introBurst');
+
+  if(!intro || !mainContent || !dot || !line || !burst){
+    revealMainContent(true);
+    return;
+  }
+
+  // begin with main hidden
   mainContent.style.opacity = 0;
-  document.getElementById('introFlash').style.display='block';
-  document.getElementById('introLine').style.display='block';
-  document.getElementById('introBurst').style.display='block';
+  mainContent.style.visibility = 'hidden';
+  mainContent.style.pointerEvents = 'none';
+  intro.style.display = 'flex';
 
-  // animation duration ~1.05s (matches CSS)
+  // Reset animations so replay works
+  resetIntroAnimations();
+
+  // Short timings (total around ~850ms)
+  // Start dot pulse (CSS keyframe)
+  dot.style.animation = 'dotPulse .6s ease-in-out forwards';
+
+  // After 180ms, start the line (so dot stretches into line)
   setTimeout(()=> {
-    // hide intro and reveal site
-    intro.style.display='none';
-    mainContent.style.opacity = 1;
-    // ensure "home" section active (in case hash)
-    const target = (location.hash || '#home').slice(1); if(document.getElementById(target)) navigate(target); else navigate('home');
-  }, 1150); // slight buffer
+    line.style.animation = 'lineGrow .75s cubic-bezier(.2,.9,.2,1) forwards';
+    line.style.left = '0%';
+  }, 180);
+
+  // After 420ms, trigger the burst to overlap
+  setTimeout(()=> {
+    burst.style.animation = 'burstShow .65s cubic-bezier(.2,.95,.2,1) forwards';
+  }, 420);
+
+  // Reveal slightly after burst completes
+  const revealAfter = 900; // ms
+  setTimeout(()=> {
+    revealMainContent();
+    if(!ignoreSeen){ try { localStorage.setItem('seenIntro_v1', 'true'); } catch(e){} }
+  }, revealAfter);
+
+  // Safety fallback
+  setTimeout(()=> {
+    const stillHidden = (mainContent && (getComputedStyle(mainContent).opacity === '0' || mainContent.style.visibility === 'hidden'));
+    if(stillHidden){
+      console.warn('Intro safety fallback: forcing reveal');
+      revealMainContent(true);
+    }
+  }, 1500);
 }
 
-/* If user has seen intro already in this browser avoid replaying (store flag) */
-const seenIntro = loadFromLocal('seenIntro_v1');
-if(!seenIntro){
-  playIntroAndReveal();
-  try { saveToLocal('seenIntro_v1', true); } catch(e){}
-} else {
-  // fast path: hide intro, show main
-  intro.style.display='none';
-  mainContent.style.opacity = 1;
-}
+/* Decide whether to auto-play intro on first visit */
+try{
+  const seen = !!localStorage.getItem('seenIntro_v1');
+  if(!seen){
+    playIntroAndReveal(false);
+  } else {
+    // skip intro and show site
+    const introEl = document.getElementById('intro'); if(introEl) introEl.style.display='none';
+    const mainContent = document.getElementById('mainContent'); if(mainContent){ mainContent.style.visibility='visible'; mainContent.style.pointerEvents='auto'; mainContent.style.opacity='1'; }
+    const target = (location.hash || '#home').slice(1);
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active'));
+    const dest = document.getElementById(target) || document.getElementById('home'); if(dest) dest.classList.add('section-active');
+  }
+}catch(e){ console.error('Intro control error', e); try{ document.getElementById('intro').style.display='none'; }catch(e){} try{ document.getElementById('mainContent').style.opacity='1'; }catch(e){} try{ document.getElementById('home').classList.add('section-active'); }catch(e){} }
 
-/* ========= ensure render after any admin changes ========= */
+/* Replay Intro button: replay but don't clear the "seen" flag (so auto-play stays single-run) */
+document.getElementById('replayIntroBtn').addEventListener('click', ()=> {
+  // Force replay regardless of seen flag
+  playIntroAndReveal(true); // pass true to avoid toggling the seen flag
+});
+
+/* ensure render after admin updates */
 window.addEventListener('storage', ()=> loadAllAndRender());
 </script>
 </body>
