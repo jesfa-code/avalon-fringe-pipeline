@@ -692,5 +692,38 @@ document.getElementById('loadBooks').addEventListener('click', ()=> document.get
 
 window.addEventListener('storage', ()=> loadAllAndRender());
 </script>
+  <script>
+  // TAB NAVIGATION FIX — ensure this runs after the DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.tablink');
+    const sections = document.querySelectorAll('.section');
+
+    tabs.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const target = btn.getAttribute('data-tab');
+        if (!target) return;
+
+        // Remove "active" from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        // Add "active" to clicked tab
+        btn.classList.add('active');
+
+        // Hide all sections
+        sections.forEach(sec => sec.classList.remove('active'));
+
+        // Show only the target section
+        const secToShow = document.getElementById(target);
+        if (secToShow) secToShow.classList.add('active');
+      });
+    });
+
+    // If URL has a hash (e.g., #social), open that tab on load
+    const initialHash = window.location.hash.slice(1);
+    if (initialHash) {
+      const initialTab = document.querySelector(`.tablink[data-tab="${initialHash}"]`);
+      if (initialTab) initialTab.click();
+    }
+  });
+</script>
 </body>
 </html>
