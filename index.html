@@ -1,700 +1,552 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Avalon Talent Pipeline — Galactic (refined intro + controls)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root{
-      --bg-1:#040613;
-      --bg-2:#23123b;
-      --accent:#8b5cf6;
-      --accent-2:#06b6d4;
-      --muted:#94a3b8;
-      --nebula-opacity: 0.30;
-      --twinkle-opacity: 0.9;
-      --drift-duration: 160s;
-    }
-    html,body{height:100%;margin:0;background:
-      radial-gradient(900px 420px at 12% 12%, rgba(139,92,246,0.06), transparent 6%),
-      radial-gradient(700px 420px at 92% 88%, rgba(6,182,212,0.04), transparent 8%),
-      linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#e6eef8; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    .container{max-width:1100px;margin:0 auto;padding:28px;position:relative;z-index:20;}
-    .section{display:none}
-    .section-active{display:block}
-    .small-italic{font-style:italic;color:var(--muted)}
-    .link{color:var(--accent);text-decoration:underline}
-    .home-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); transition:transform .18s,box-shadow .18s}
-    .home-card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(2,6,23,0.5);border-color:rgba(139,92,246,0.25)}
-    thead{backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(15,23,36,0.6), rgba(15,23,36,0.4))}
-    .json-edit{width:100%;height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px;background:#071023;color:#dbeafe;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04)}
-    .btn-accent{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#02111a;font-weight:600;padding:8px 12px;border-radius:8px;border:none}
-    .avalon-logo{width:220px;height:56px;display:block;cursor:pointer}
-    .logo-wrap{display:flex;align-items:center;gap:12px}
-    .logo-glow{filter:drop-shadow(0 6px 16px rgba(139,92,246,0.18)) drop-shadow(0 2px 6px rgba(6,182,212,0.06));transition:transform .18s,filter .18s}
-    .logo-wrap:hover .logo-glow{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 10px 30px rgba(139,92,246,0.28)) drop-shadow(0 4px 12px rgba(6,182,212,0.12))}
+<meta charset="UTF-8" />
+<title>Avalon Pipeline — Galaxy Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    /* NEBULA & STARS */
-    .nebula{position:fixed;inset:-10% -10% auto -10%;height:70vh;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(40% 30% at 10% 40%, rgba(139,92,246,0.18), transparent 20%),
-        radial-gradient(30% 40% at 80% 70%, rgba(6,182,212,0.14), transparent 18%),
-        radial-gradient(45% 30% at 60% 20%, rgba(255,120,150,0.08), transparent 15%);
-      mix-blend-mode:screen;filter:blur(48px) saturate(110%);opacity:var(--nebula-opacity);transform:translateZ(0);animation:nebMove 28s linear infinite alternate;
-    }
-    @keyframes nebMove{0%{transform:translate(-2%,-1%) scale(1)}100%{transform:translate(2%,1%) scale(1.03)}}
-    .stars-static{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:
-      radial-gradient(1px 1px at 5% 12%, rgba(255,255,255,0.06), transparent 40%),
-      radial-gradient(1px 1px at 18% 48%, rgba(255,255,255,0.04), transparent 40%),
-      radial-gradient(1px 1px at 32% 24%, rgba(255,255,255,0.03), transparent 40%),
-      radial-gradient(1px 1px at 68% 70%, rgba(255,255,255,0.05), transparent 40%),
-      radial-gradient(1px 1px at 86% 40%, rgba(255,255,255,0.04), transparent 40%);
-      background-size:1200px 800px;animation:drift var(--drift-duration) linear infinite;filter:blur(.4px) brightness(0.95);opacity:0.95;
-    }
-    .twinkles{position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen}
-    .twinkles::before,.twinkles::after{content:"";position:absolute;inset:0;opacity:var(--twinkle-opacity)}
-    .twinkles::before{background-image:
-      radial-gradient(circle at 12% 18%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 22% 40%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 35% 70%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 48% 30%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 58% 58%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 72% 20%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 86% 78%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px);
-      animation:twinkleSlow 6s ease-in-out infinite;filter:blur(.3px);
-    }
-    .twinkles::after{background-image:
-      radial-gradient(circle at 8% 58%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 18% 78%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 28% 12%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 42% 86%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 63% 42%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 78% 14%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
-      radial-gradient(circle at 92% 46%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px);
-      animation:twinkleFast 3.6s ease-in-out infinite;opacity:calc(var(--twinkle-opacity)*0.9);filter:blur(.4px);
-    }
-    @keyframes twinkleSlow{0%{opacity:calc(var(--twinkle-opacity)*0.2);transform:scale(.98)}50%{opacity:var(--twinkle-opacity);transform:scale(1.05)}100%{opacity:calc(var(--twinkle-opacity)*0.3);transform:scale(1)}}
-    @keyframes twinkleFast{0%{opacity:calc(var(--twinkle-opacity)*0.1);transform:scale(.9)}45%{opacity:var(--twinkle-opacity);transform:scale(1.12)}100%{opacity:calc(var(--twinkle-opacity)*0.15);transform:scale(1)}}
-    @keyframes drift{from{background-position:0 0} to{background-position:1400px -600px}}
+<style>
+  :root{
+    --ink:#e2e8f0; --ink-dim:#9fb0c6;
+    --panel: rgba(9,10,15,0.65);
+    --panel-strong: rgba(9,10,15,0.85);
+    --glow1:#7df9ff; --glow2:#b388ff;
+    --accent:#79ffe1; --accent2:#a78bfa;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#090a0f;overflow-x:hidden}
+  a{color:#b9dcff}
+  /* Galaxy background */
+  .stars{position:fixed;inset:0;z-index:-3;background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%)}
+  .stars::before,.stars::after{
+    content:"";position:absolute;inset:-50%;background:
+      radial-gradient(2px 2px at 20% 30%,#fff 60%,transparent 61%),
+      radial-gradient(1px 1px at 40% 80%,#fff 60%,transparent 61%),
+      radial-gradient(2px 2px at 65% 40%,#fff 60%,transparent 61%),
+      radial-gradient(1px 1px at 80% 60%,#fff 60%,transparent 61%),
+      radial-gradient(1px 1px at 10% 70%,#fff 60%,transparent 61%),
+      radial-gradient(2px 2px at 90% 20%,#fff 60%,transparent 61%);
+    opacity:.4;animation:starDrift 260s linear infinite
+  }
+  .stars::after{animation-duration:320s;opacity:.5;filter:blur(.5px)}
+  @keyframes starDrift{from{transform:translate(0,0)}to{transform:translate(-10%,10%)}}
 
-    /* INTRO: dot -> thin flickering line -> smaller, softened burst (shorter overall) */
-    .intro-overlay{position:fixed;inset:0;z-index:9999;background:transparent;display:flex;align-items:center;justify-content:center;pointer-events:none}
-    .intro-dot{ position:absolute; width:8px; height:8px; border-radius:50%; background: white; box-shadow:0 0 14px rgba(255,255,255,0.85), 0 0 28px rgba(139,92,246,0.12); opacity:0; transform:scale(0.2); animation:dotPulse .6s ease-in-out forwards; will-change: transform, opacity; }
-    .intro-line{ position:absolute; height:2px; background:rgba(255,255,255,0.95); width:6%; left:47%; top:50%; transform-origin:left center; opacity:0; filter:drop-shadow(0 8px 18px rgba(255,255,255,0.08)); animation:lineGrow .75s cubic-bezier(.2,.9,.2,1) forwards; will-change: width, opacity, transform; }
-    .intro-line::after{ content:""; position:absolute; inset:-4px -6px; background:linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0)); opacity:0; animation:lineFlicker .75s ease-in-out forwards; }
-    .intro-burst{ position:absolute; border-radius:50%; width:16px; height:16px; background:radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.45) 28%, rgba(139,92,246,0.12) 55%, rgba(6,182,212,0.02) 80%, transparent 100%); opacity:0; transform:scale(.18); filter:blur(4px); animation:burstShow .65s cubic-bezier(.2,.95,.2,1) forwards; will-change: transform, opacity, filter; }
+  .nebula{position:fixed;inset:-50%;z-index:-2;
+    background:
+      radial-gradient(800px 600px at 20% 30%, rgba(138,43,226,.25), transparent 60%),
+      radial-gradient(700px 700px at 75% 70%, rgba(0,191,255,.18), transparent 60%),
+      radial-gradient(600px 500px at 60% 20%, rgba(255,20,147,.12), transparent 60%);
+    filter:saturate(1.2) blur(0.3px);
+    animation:nebulaDrift 60s ease-in-out infinite alternate;
+  }
+  @keyframes nebulaDrift{from{transform:translate(0,0) scale(1)}to{transform:translate(-6%,-6%) scale(1.08)}}
 
-    @keyframes dotPulse {
-      0% { opacity:0; transform:scale(.2); }
-      8% { opacity:1; transform:scale(1); }
-      30% { opacity:0.9; transform:scale(1.12) }
-      46% { opacity:0.6; transform:scale(.85) }
-      60% { opacity:0.2; transform:scale(.45) }
-      75% { opacity:0; transform:scale(.3) }
-      100%{ opacity:0; transform:scale(.3) }
-    }
-    @keyframes lineGrow {
-      0% { opacity:0; width:6%; transform:translateX(0) scaleX(0.02) }
-      22% { opacity:1; width:14%; transform:scaleX(0.25) }
-      38% { width:40%; transform:scaleX(0.7) }
-      54% { width:78%; transform:scaleX(1.0) }
-      68% { width:100%; transform:scaleX(1.02) }
-      85% { opacity:1; transform:scaleX(1.0) }
-      100% { opacity:0; transform:scale(26); }
-    }
-    @keyframes lineFlicker {
-      0% { opacity:0 }
-      18%{ opacity:1 }
-      36%{ opacity:0.6 }
-      52%{ opacity:1 }
-      70%{ opacity:0.6 }
-      100%{ opacity:0 }
-    }
-    @keyframes burstShow {
-      0% { opacity:0; transform:scale(.18); filter:blur(4px) }
-      48% { opacity:0.85; transform:scale(.95); filter:blur(2px) }
-      70% { opacity:0.6; transform:scale(5); filter:blur(6px) }
-      100% { opacity:0; transform:scale(32); filter:blur(12px) }
-    }
+  /* Intro overlay */
+  #intro{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;overflow:hidden}
+  #intro .spark{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff,0 0 18px var(--glow1),0 0 32px var(--glow2);opacity:0;animation:sparkTwinkle .7s ease-out .1s forwards}
+  #intro .line{height:2px;width:0;background:linear-gradient(90deg,transparent,#fff,transparent);filter:drop-shadow(0 0 8px #fff);opacity:0;margin:14px 0;animation:lineGrow 0.7s ease-out .55s forwards}
+  #intro .burst{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#fff 30%,rgba(255,255,255,.6) 50%,transparent 70%);opacity:0;animation:burstPop .55s ease-out 1.1s forwards}
+  @keyframes sparkTwinkle{0%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1.1)}100%{opacity:.2;transform:scale(.8)}}
+  @keyframes lineGrow{0%{opacity:0;width:0}40%{opacity:1;width:60vw}100%{opacity:0;width:0}}
+  @keyframes burstPop{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.6)}100%{opacity:0;transform:scale(2.1)}}
 
-    /* presentation tweaks */
-    body.presentation h1{font-size:2.6rem}
-    body.presentation .home-card{transform:none;box-shadow:none}
-    body.presentation .container{max-width:1400px;padding:36px}
-    body.presentation .json-edit{height:320px}
-    body.presentation .avalon-logo{width:320px}
-    @media (max-width:640px){ .container{padding:18px} .avalon-logo{width:160px;height:48px} }
-  </style>
+  /* Layout */
+  .topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(6px);background:linear-gradient(0deg,transparent,rgba(0,0,0,.55));border-bottom:1px solid rgba(255,255,255,.08)}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  .brand{display:flex;gap:14px;align-items:center}
+  .brand img{height:56px;width:auto;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 24px var(--glow1)) drop-shadow(0 0 48px var(--glow2))}
+  .brand h1{font-size:20px;font-weight:700;letter-spacing:.5px;margin:0}
+  .nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tablink{padding:8px 14px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.06);cursor:pointer}
+  .tablink.active{background:linear-gradient(90deg,rgba(125,249,255,.18),rgba(167,139,250,.18));border-color:rgba(255,255,255,.25);box-shadow:0 0 12px rgba(125,249,255,.3), inset 0 0 8px rgba(167,139,250,.2)}
+  .content{padding:18px}
+  .section{display:none;animation:fadeIn .28s ease-out}
+  .section.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Panels & tables */
+  .panel{background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+  .tablewrap{overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
+  table{width:100%;border-collapse:collapse;background:var(--panel-strong)}
+  th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+  thead th{position:sticky;top:0;background:rgba(255,255,255,.07);backdrop-filter:blur(3px)}
+  td em{color:var(--ink-dim);font-style:italic}
+
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+  .btn{padding:8px 12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);border-radius:10px;cursor:pointer}
+  .btn:hover{border-color:rgba(255,255,255,.35);box-shadow:0 0 10px rgba(125,249,255,.2)}
+  .input, select{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:var(--ink)}
+  .note{color:var(--ink-dim);font-size:12px;margin-top:6px}
+
+  /* Collapsible form */
+  details.formbox{margin-top:12px}
+  details.formbox[open] summary{border-bottom-left-radius:0;border-bottom-right-radius:0}
+  summary{list-style:none;cursor:pointer;padding:10px 12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px}
+  summary::marker, summary::-webkit-details-marker{display:none}
+  .iframewrap{border:1px solid rgba(255,255,255,.15);border-top:0;border-bottom-left-radius:10px;border-bottom-right-radius:10px;overflow:hidden}
+
+  /* Hidden admin */
+  .adminBadge{display:none;gap:6px;align-items:center;margin-left:auto}
+  .admin .adminBadge{display:flex}
+  .editbar{display:none;gap:8px;margin-bottom:8px}
+  .editing .editbar{display:flex}
+  .ghost{opacity:.65}
+
+  /* Toast */
+  .toast{position:fixed;bottom:16px;right:16px;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 14px;opacity:0;transform:translateY(8px);transition:.25s}
+  .toast.show{opacity:1;transform:translateY(0)}
+</style>
 </head>
 <body>
-  <div class="nebula" id="nebulaLayer" aria-hidden="true"></div>
-  <div class="stars-static" id="staticStars" aria-hidden="true"></div>
-  <div class="twinkles" id="twinkleLayer" aria-hidden="true"></div>
+  <!-- Galaxy -->
+  <div class="stars"></div>
+  <div class="nebula"></div>
 
-  <!-- Intro overlay -->
-  <div id="intro" class="intro-overlay" aria-hidden="true">
-    <div id="introDot" class="intro-dot" style="left:49%; top:50%;"></div>
-    <div id="introLine" class="intro-line" style="left:0%; top:50%;"></div>
-    <div id="introBurst" class="intro-burst" style="left:50%; top:50%; transform:translate(-50%,-50%);"></div>
+  <!-- Intro -->
+  <div id="intro" aria-hidden="true">
+    <div class="spark"></div>
+    <div class="line"></div>
+    <div class="burst"></div>
   </div>
 
-  <div class="container content-layer" id="mainContent" aria-hidden="true" style="opacity:0;visibility:hidden;transition:opacity .4s ease, visibility .01s linear .4s;">
-    <header class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-4">
-        <div class="logo-wrap" onclick="navigate('home')" title="Avalon — click to go home" role="button">
-          <svg class="avalon-logo logo-glow" viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
-              <filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b" /><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <rect rx="12" width="640" height="160" fill="transparent" />
-            <g filter="url(#fGlow)"><text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="64" fill="url(#g1)">AVALON</text></g>
-            <text x="50%" y="85%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, sans-serif" font-weight="500" font-size="14" fill="#cfe9ff" opacity="0.85">ENTERTAINMENT PIPELINE</text>
-          </svg>
-        </div>
-
-        <div>
-          <h1 class="text-2xl font-bold" style="color:#f8fafc;">Avalon Talent Pipeline</h1>
-          <p class="text-sm" style="color:var(--muted)">Cinematic pipeline — Fringe, Social, Plays, Books, Pitches</p>
-        </div>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="wrap brand">
+      <img src="avalon-logo.png" alt="Avalon Entertainment" />
+      <h1>Avalon Pipeline</h1>
+      <div class="adminBadge"><span class="ghost">Admin:</span>
+        <button class="btn" id="toggleEdit">✏️ Edit</button>
+        <button class="btn" id="saveEdit">✅ Save</button>
+        <button class="btn" id="cancelEdit">✖ Cancel</button>
       </div>
-
-      <div class="flex items-center gap-2">
-        <div class="flex gap-1 items-center">
-          <button id="effectsToggleBtn" class="px-3 py-2 rounded border">Effects</button>
-          <div id="effectsMenu" style="display:none;" class="p-2 bg-[#071129] rounded border text-sm">
-            <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="nebulaCheckbox"> Nebula</label>
-            <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox" id="twinkleCheckbox"> Twinkles</label>
-            <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox" id="starsCheckbox"> Static stars</label>
-          </div>
-        </div>
-
-        <button id="presentationBtn" class="px-3 py-2 rounded border">Presentation</button>
-        <button id="replayIntroBtn" class="px-3 py-2 rounded border">Replay Intro</button>
-        <button id="exportBtn" class="px-3 py-2 rounded border">Export JSON</button>
-        <button id="goHome" class="btn-accent">Home</button>
-        <button id="openAdminBtn" class="px-3 py-2 rounded border border-white/10">Admin</button>
+      <div class="nav" id="tabs">
+        <button class="tablink active" data-tab="home">Home</button>
+        <button class="tablink" data-tab="fringe">Fringe Comedians</button>
+        <button class="tablink" data-tab="social">Social Comedians</button>
+        <button class="tablink" data-tab="plays">London Plays</button>
+        <button class="tablink" data-tab="books">Books</button>
+        <button class="tablink" data-tab="pitch">Pitch</button>
       </div>
-    </header>
-
-    <!-- HOME -->
-    <main id="home" class="section section-active">
-      <section class="bg-gradient-to-b from-[#071031]/60 to-[#071129]/40 p-6 rounded mb-6 home-card text-center">
-        <h2 class="text-xl font-semibold mb-2" style="color:#eef2ff">Welcome — Avalon Talent Pipeline</h2>
-        <p class="text-sm" style="color:var(--muted)">Jump into datasets, submit suggestions, or use the Admin panel to edit tables locally.</p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
-          <button onclick="navigate('fringe')" class="home-card block p-4 rounded text-left">
-            <h3 class="font-semibold" style="color:#fff">Fringe Comedians</h3>
-            <p class="text-sm" style="color:var(--muted)">Full dataset, reviews & clips — updated weekly.</p>
-          </button>
-          <button onclick="navigate('social')" class="home-card block p-4 rounded text-left">
-            <h3 class="font-semibold">Social Media Comedians</h3>
-            <p class="text-sm" style="color:var(--muted)">Creators with IG/TikTok reach and viral hooks.</p>
-          </button>
-          <button onclick="navigate('plays')" class="home-card block p-4 rounded text-left">
-            <h3 class="font-semibold">London Plays</h3>
-            <p class="text-sm" style="color:var(--muted)">Current London runs — directors & theatres included.</p>
-          </button>
-          <button onclick="navigate('books')" class="home-card block p-4 rounded text-left">
-            <h3 class="font-semibold">BookTok Books</h3>
-            <p class="text-sm" style="color:var(--muted)">Trending books and media buzz.</p>
-          </button>
-          <button onclick="navigate('pitches')" class="home-card block p-4 rounded text-left bg-[linear-gradient(90deg,#3b82f6,rgba(139,92,246,0.18))]">
-            <h3 class="font-semibold">Pitches</h3>
-            <p class="text-sm" style="color:#071031">Dev notes and the mockumentary/sketch pitch.</p>
-          </button>
-          <button onclick="navigate('suggest')" class="home-card block p-4 rounded text-left">
-            <h3 class="font-semibold">Suggest / Submissions</h3>
-            <p class="text-sm" style="color:var(--muted)">Forms for each section</p>
-          </button>
-        </div>
-
-        <p class="text-xs text-slate-400 mt-4">Tip: Admin edits are local to your browser. For multi-user editing I can set up Google Sheet sync or a small CMS.</p>
-      </section>
-    </main>
-
-    <!-- FRINGE -->
-    <section id="fringe" class="section px-0">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Fringe Comedians</h2>
-        <div class="flex gap-2">
-          <input id="fringe-search" placeholder="Search name or show" class="p-2 rounded bg-[#071029] border border-white/6" />
-          <select id="fringe-minScore" class="p-2 rounded bg-[#071029] border border-white/6">
-            <option value="">Min score</option><option>6</option><option>7</option><option>8</option><option>9</option>
-          </select>
-          <select id="fringe-sortBy" class="p-2 rounded bg-[#071029] border border-white/6">
-            <option value="developPotential">Hype / Potential</option>
-            <option value="soldOutCount">Sold-out count</option>
-            <option value="addedShows">Added shows</option>
-          </select>
-          <select id="fringe-order" class="p-2 rounded bg-[#071029] border border-white/6"><option value="desc">Desc</option><option value="asc">Asc</option></select>
-          <button id="fringe-reset" class="px-3 py-2 rounded border">Reset</button>
-          <button id="fringe-csv" class="btn-accent">CSV</button>
-        </div>
-      </div>
-
-      <div class="overflow-auto border rounded bg-[#071023] mb-6">
-        <table class="min-w-full table-auto">
-          <thead class="bg-[#071428] sticky top-0">
-            <tr>
-              <th class="px-3 py-2 text-left">#</th>
-              <th class="px-3 py-2 text-left">Name</th>
-              <th class="px-3 py-2 text-left">Show</th>
-              <th class="px-3 py-2 text-left">About</th>
-              <th class="px-3 py-2 text-left">Venues</th>
-              <th class="px-3 py-2 text-left">Agent / Email</th>
-              <th class="px-3 py-2 text-left">Review / Clip</th>
-              <th class="px-3 py-2 text-left">Sold / Added</th>
-              <th class="px-3 py-2 text-left">Score</th>
-            </tr>
-          </thead>
-          <tbody id="fringe-body"></tbody>
-        </table>
-      </div>
-
-      <div class="p-4 bg-[#071129] border rounded my-6 shadow">
-        <h3 class="text-lg font-semibold mb-2">Suggest a Comedian (Fringe)</h3>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
-      </div>
-
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <!-- SOCIAL -->
-    <section id="social" class="section px-0">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Social Media Comedians</h2>
-        <div class="flex gap-2">
-          <input id="social-search" placeholder="Search name or platform" class="p-2 rounded bg-[#071029] border border-white/6" />
-          <select id="social-sortBy" class="p-2 rounded bg-[#071029] border border-white/6"><option value="Score">Potential</option><option value="Followers">Followers</option></select>
-          <select id="social-order" class="p-2 rounded bg-[#071029] border border-white/6"><option value="desc">Desc</option><option value="asc">Asc</option></select>
-          <button id="social-reset" class="px-3 py-2 rounded border">Reset</button>
-          <button id="social-csv" class="btn-accent">CSV</button>
-        </div>
-      </div>
-
-      <div class="overflow-auto border rounded bg-[#071023] mb-6">
-        <table class="min-w-full table-auto">
-          <thead class="bg-[#071428] sticky top-0">
-            <tr>
-              <th class="px-3 py-2 text-left">Name</th>
-              <th class="px-3 py-2 text-left">Platform</th>
-              <th class="px-3 py-2 text-left">Followers</th>
-              <th class="px-3 py-2 text-left">Style</th>
-              <th class="px-3 py-2 text-left">Links</th>
-              <th class="px-3 py-2 text-left">Score</th>
-              <th class="px-3 py-2 text-left">Notes</th>
-            </tr>
-          </thead>
-          <tbody id="social-body"></tbody>
-        </table>
-      </div>
-
-      <div class="p-4 bg-[#071129] border rounded my-6 shadow">
-        <h3 class="text-lg font-semibold mb-2">Suggest a Social Media Comedian</h3>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
-      </div>
-
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <!-- PLAYS -->
-    <section id="plays" class="section px-0">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">London Plays (current)</h2>
-        <div class="flex gap-2">
-          <input id="plays-search" placeholder="Search title, playwright, theatre or director" class="p-2 rounded bg-[#071029] border border-white/6" />
-          <select id="plays-sortBy" class="p-2 rounded bg-[#071029] border border-white/6"><option value="score">Score</option></select>
-          <select id="plays-order" class="p-2 rounded bg-[#071029] border border-white/6"><option value="desc">Desc</option><option value="asc">Asc</option></select>
-          <button id="plays-reset" class="px-3 py-2 rounded border">Reset</button>
-          <button id="plays-csv" class="btn-accent">CSV</button>
-        </div>
-      </div>
-
-      <div class="overflow-auto border rounded bg-[#071023] mb-6">
-        <table class="min-w-full table-auto">
-          <thead class="bg-[#071428] sticky top-0">
-            <tr>
-              <th class="px-3 py-2 text-left">Title</th>
-              <th class="px-3 py-2 text-left">Playwright</th>
-              <th class="px-3 py-2 text-left">Director</th>
-              <th class="px-3 py-2 text-left">Theatre</th>
-              <th class="px-3 py-2 text-left">Genre</th>
-              <th class="px-3 py-2 text-left">Review</th>
-              <th class="px-3 py-2 text-left">Score</th>
-              <th class="px-3 py-2 text-left">Notes</th>
-            </tr>
-          </thead>
-          <tbody id="plays-body"></tbody>
-        </table>
-      </div>
-
-      <div class="p-4 bg-[#071129] border rounded my-6 shadow">
-        <h3 class="text-lg font-semibold mb-2">Suggest a Play</h3>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSflXbVZyY5wlAd4-qScZOKVY8iYYhsOR65aaGOTetHf1dtVgg/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
-      </div>
-
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <!-- BOOKS -->
-    <section id="books" class="section px-0">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">BookTok / Trending Books</h2>
-        <div class="flex gap-2">
-          <input id="books-search" placeholder="Search title or author" class="p-2 rounded bg-[#071029] border border-white/6" />
-          <select id="books-sortBy" class="p-2 rounded bg-[#071029] border border-white/6"><option value="Score">Score</option></select>
-          <select id="books-order" class="p-2 rounded bg-[#071029] border border-white/6"><option value="desc">Desc</option><option value="asc">Asc</option></select>
-          <button id="books-reset" class="px-3 py-2 rounded border">Reset</button>
-          <button id="books-csv" class="btn-accent">CSV</button>
-        </div>
-      </div>
-
-      <div class="overflow-auto border rounded bg-[#071023] mb-6">
-        <table class="min-w-full table-auto">
-          <thead class="bg-[#071428] sticky top-0">
-            <tr>
-              <th class="px-3 py-2 text-left">Title</th>
-              <th class="px-3 py-2 text-left">Author</th>
-              <th class="px-3 py-2 text-left">Genre</th>
-              <th class="px-3 py-2 text-left">Trending Reason</th>
-              <th class="px-3 py-2 text-left">Links</th>
-              <th class="px-3 py-2 text-left">Score</th>
-            </tr>
-          </thead>
-          <tbody id="books-body"></tbody>
-        </table>
-      </div>
-
-      <div class="p-4 bg-[#071129] border rounded my-6 shadow">
-        <h3 class="text-lg font-semibold mb-2">Suggest a Book</h3>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
-      </div>
-
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <!-- PITCHES -->
-    <section id="pitches" class="section px-0">
-      <div class="bg-[#071129] p-4 rounded border mb-4">
-        <h2 class="text-xl font-semibold mb-2">Pitch — Mockumentary Sketch (The Platform)</h2>
-        <p class="small-italic">A modern Real McCoy reimagined as a mockumentary inside a fictional social media company — short-form clips styled for TikTok + 20–25 minute broadcast episodes.</p>
-
-        <div class="mt-3 text-sm" style="color:var(--muted)">
-          <h3 class="font-semibold">Logline</h3>
-          <p>A mockumentary-sketch hybrid set inside a fictional social-platform where influencers and creators churn out viral content — deadpan satire with short-form clips built for TikTok/YouTube and a 20–25 minute broadcast strand.</p>
-
-          <h3 class="font-semibold mt-3">Background / Rationale</h3>
-          <p>Influencer-driven comedians are tastemakers for Gen-Z — the UK is missing a modern sketch-mockumentary that is digital-first. Use social KPIs + sizzle to de-risk commissioning. (Example reference: BBCTHREE topical documentary strands & social-first formats.)</p>
-
-          <h3 class="font-semibold mt-3">Talent (examples)</h3>
-          <p>Munya Chawawa, Safro, Joa-style creators + recent fringe comics (Ayo Adenekan, Ayoade Bamgboye, Sam Nicoresti, etc.).</p>
-
-          <h3 class="font-semibold mt-3">Prototype ask</h3>
-          <p>Support a 90–120s sizzle featuring one named creator + one fringe comic. Target social KPIs (50k+ views in 30 days) to secure commissioning interest.</p>
-        </div>
-      </div>
-
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <!-- SUGGEST -->
-    <section id="suggest" class="section px-0">
-      <h2 class="text-xl font-semibold mb-3">Public Submission Forms</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Fringe Comedians</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
-        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Social Media Comedians</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
-        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Book / Plays Suggestions</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
-      </div>
-      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
-    </section>
-
-    <footer class="mt-8 text-xs text-slate-400"><p>Built for Avalon — internal demo. Admin edits are client-side and stored in your browser. Ask me to hook up Google Sheets or a CMS for team editing & publishing.</p></footer>
-  </div>
-
-  <!-- ADMIN MODAL -->
-  <div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:60; align-items:center; justify-content:center;">
-    <div style="width:92%; max-width:1100px;" class="bg-[#071129] rounded shadow p-4 border">
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-semibold">Admin — Edit JSON data (local only)</h3>
-        <div class="flex gap-2">
-          <button id="adminClose" class="px-3 py-2 rounded border">Close</button>
-          <button id="adminReset" class="px-3 py-2 rounded bg-yellow-100">Reset to built-in</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="font-semibold">Fringe (JSON)</label>
-          <textarea id="adminFringe" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2"><button id="saveFringe" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadFringe" class="px-3 py-2 rounded border">Reload</button></div>
-        </div>
-        <div>
-          <label class="font-semibold">Social (JSON)</label>
-          <textarea id="adminSocial" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2"><button id="saveSocial" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadSocial" class="px-3 py-2 rounded border">Reload</button></div>
-        </div>
-
-        <div>
-          <label class="font-semibold">Plays (JSON)</label>
-          <textarea id="adminPlays" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2"><button id="savePlays" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadPlays" class="px-3 py-2 rounded border">Reload</button></div>
-        </div>
-        <div>
-          <label class="font-semibold">Books (JSON)</label>
-          <textarea id="adminBooks" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2"><button id="saveBooks" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadBooks" class="px-3 py-2 rounded border">Reload</button></div>
-        </div>
-      </div>
-
-      <p class="text-xs text-slate-400 mt-3">Notes: this edits data stored in your browser localStorage (so only you see changes on this machine). If you want multi-user editing, I can connect a Google Sheet or CMS.</p>
     </div>
   </div>
 
+  <div class="wrap content" id="mainContent" style="opacity:0;visibility:hidden;">
+    <!-- HOME -->
+    <section id="home" class="section active">
+      <div class="panel">
+        <h2>Welcome</h2>
+        <p>Curated, development-minded tracker for talent & IP across Fringe comedy, social-first comedians, London stage, and BookTok heat — with a live pitch deck.</p>
+        <p class="note">Tip: add <code>#admin</code> to the URL to reveal inline editing controls for tables (client-side, saved to your browser).</p>
+      </div>
+    </section>
+
+    <!-- FRINGE -->
+    <section id="fringe" class="section">
+      <div class="panel">
+        <div class="controls">
+          <input id="fSearch" class="input" placeholder="Search name or show…" />
+          <label>Min score
+            <select id="fMin" class="input">
+              <option value="">Any</option><option>6</option><option>7</option><option>8</option><option>9</option>
+            </select>
+          </label>
+          <label>Sort by
+            <select id="fSort" class="input">
+              <option value="developPotential">Hype / Develop Potential</option>
+              <option value="soldOutCount">Sold-out count</option>
+              <option value="addedShows">Added shows</option>
+            </select>
+          </label>
+          <label>Order
+            <select id="fOrder" class="input"><option value="desc">Desc</option><option value="asc">Asc</option></select>
+          </label>
+          <button class="btn" id="fCsv">Download CSV</button>
+        </div>
+
+        <div class="editbar"><span class="ghost">Inline edit active — click table cells to edit, then “Save”.</span></div>
+
+        <div class="tablewrap">
+          <table id="fringeTbl">
+            <thead>
+              <tr>
+                <th>Rank</th><th>Name</th><th>Show</th><th>About</th><th>Venues</th>
+                <th>Agent / Contact</th><th>Reviews & Clips</th><th>Sold / Added</th><th>Score</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <details class="formbox">
+          <summary>Suggest a Fringe comedian</summary>
+          <div class="iframewrap">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="720" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- SOCIAL -->
+    <section id="social" class="section">
+      <div class="panel">
+        <div class="controls">
+          <input id="sSearch" class="input" placeholder="Search name or platform…" />
+          <button class="btn" id="sCsv">Download CSV</button>
+        </div>
+        <div class="editbar"><span class="ghost">Inline edit active — click table cells to edit, then “Save”.</span></div>
+        <div class="tablewrap">
+          <table id="socialTbl">
+            <thead>
+              <tr><th>Name</th><th>Primary Platform</th><th>Followers (approx)</th><th>Engagement (est)</th><th>Links</th><th>Notes</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <details class="formbox">
+          <summary>Suggest a social-first comedian</summary>
+          <div class="iframewrap">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="720" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- PLAYS -->
+    <section id="plays" class="section">
+      <div class="panel">
+        <div class="controls">
+          <input id="pSearch" class="input" placeholder="Search title, playwright, theatre…" />
+          <button class="btn" id="pCsv">Download CSV</button>
+        </div>
+        <div class="editbar"><span class="ghost">Inline edit active — click table cells to edit, then “Save”.</span></div>
+        <div class="tablewrap">
+          <table id="playsTbl">
+            <thead>
+              <tr><th>Title</th><th>Playwright</th><th>Director</th><th>Theatre</th><th>Dates</th><th>Links</th><th>Notes</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <details class="formbox">
+          <summary>Suggest a London play</summary>
+          <div class="iframewrap">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSflXbVZyY5wlAd4-qScZOKVY8iYYhsOR65aaGOTetHf1dtVgg/viewform?embedded=true" width="100%" height="720" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- BOOKS -->
+    <section id="books" class="section">
+      <div class="panel">
+        <div class="controls">
+          <input id="bSearch" class="input" placeholder="Search title or author…" />
+          <button class="btn" id="bCsv">Download CSV</button>
+        </div>
+        <div class="editbar"><span class="ghost">Inline edit active — click table cells to edit, then “Save”.</span></div>
+        <div class="tablewrap">
+          <table id="booksTbl">
+            <thead>
+              <tr><th>Title</th><th>Author</th><th>Genre</th><th>Links</th><th>Notes</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <details class="formbox">
+          <summary>Suggest a book</summary>
+          <div class="iframewrap">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="720" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- PITCH -->
+    <section id="pitch" class="section">
+      <div class="panel">
+        <h2>Pitch — Mockumentary × Sketch: “Algorithm Approved” (WT)</h2>
+        <h3>Logline</h3>
+        <p><em>A fast-cut mockumentary set inside a fictional social platform where creators, managers and interns chase the algorithm — a sketch hybrid made for TV and endlessly sliceable for TikTok/YouTube.</em></p>
+
+        <h3>Background (influencer comedy landscape)</h3>
+        <ul>
+          <li><strong>Influencers are the new celebrities</strong> — built-in audiences &amp; immediate reach.</li>
+          <li><strong>Sketch gap on UK TV</strong> — youth-skewing, digital-first revival opportunity.</li>
+          <li>Precedent: <em>#HoodDocumentary</em> (BBC Three) → digital-to-TV pathway, enduring meme impact.</li>
+        </ul>
+
+        <h3>Why Avalon / market fit</h3>
+        <ul>
+          <li>Digital-first pipeline: short clips (40–90s) + 20–25min episode package.</li>
+          <li>Low-cost production model, scalable with demand.</li>
+          <li>Dual monetisation (platform ads &amp; broadcast window).</li>
+        </ul>
+
+        <h3>Series concept</h3>
+        <p>Mock-doc interviews + quick sketches inside “Instangram” (WT): creator wars, brand cringe, “authenticity metrics,” and algorithm panic. Repeatable workplace-world + rotating guest stars.</p>
+
+        <h3>Talent pool (examples)</h3>
+        <ul>
+          <li><strong>Digital anchors:</strong> Munya Chawawa, Lucia Keskin, Tyrell Charles, Max Fosh, Niko Omilana, Amelia Dimoldenberg (availability TBD).</li>
+          <li><strong>Fringe alums for character work:</strong> Ayo Adenekan, Sam Nicoresti, Ayoade Bamgboye, Cat Cohen, Toussaint Douglass.</li>
+        </ul>
+
+        <h3>Prototype ask</h3>
+        <p>60–120s sizzle: two sketches + confessional, shot in an office with phone + A-cam. Social KPIs prove demand before scaling.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">Saved</div>
+
 <script>
-/* ========== Built-in data (same as before) ========== */
-const BUILTIN_fringe = [
-  {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"<span class='small-italic'>Strong local sell-outs; warm, character-led writing — good for live special or pilot development.</span>"},
-  {"id":2,"name":"Toussaint Douglass","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management","email":"(agent contact via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material","developPotential":7,"notes":"<span class='small-italic'>Inventive stage prop work and distinct voice — good for character-led sketch development.</span>"},
-  {"id":3,"name":"Amelia Hamilton","show":"Forget Me Not","about":"Gen-Z rap-comedy hybrid using original music and quick gags.","agent":"Unagented","email":"amelialouisehamilton@gmail.com","venues":"Pleasance Courtyard (Attic)","soldOutCount":0,"addedShows":0,"review":"https://www.chortle.co.uk/review/2025/08/01/58633/amelia_hamilton%3A_forget_me_not","clip":"https://www.youtube.com/results?search_query=Amelia+Hamilton+Forget+Me+Not","developPotential":6,"notes":"<span class='small-italic'>Musical and character bits could be expanded into sketches or a short-form comedy series.</span>"},
-  {"id":4,"name":"Ola Labib","show":"Dispersible","about":"Ex-NHS pharmacist turned comedian: sharp satire about TV industry & diaspora life.","agent":"UTC Artist Management","email":"(publicist via Soho/Theatre listings)","venues":"Soho Theatre / festival circuit","soldOutCount":0,"addedShows":0,"review":"https://sohotheatre.com/events/ola-labib-dispersible/","clip":"https://www.youtube.com/watch?v=K3_oxIzhrF4","developPotential":9,"notes":"<span class='small-italic'>Has TV credits and pilot potential; good candidate for scripted comedy development.</span>"},
-  {"id":5,"name":"Cat Cohen","show":"Broad Strokes","about":"Cabaret-comedy blend: songs + stand-up and character work with big stagecraft.","agent":"CAA (US management)","email":"(via official site)","venues":"Pleasance Courtyard / cabaret slots","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/06/cat-cohen-broad-strokes-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Cat+Cohen+comedy","developPotential":8,"notes":"<span class='small-italic'>Strong performer with musical/comedic storytelling — good for live special or hybrid TV format.</span>"},
-  {"id":6,"name":"Ayoade Bamgboye","show":"Swings and Roundabouts","about":"A commanding debut mixing accents, character work and dramatic comedy.","agent":"Independent Talent Group","email":"(agent via Independent Talent)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/17/ayoade-bamgboye-swings-and-roundabouts-review-commanding-comics-thrilling-debut","clip":"https://www.edfringe.com/tickets/whats-on/ayoade-bamgboye-swings-and-roundabouts","developPotential":9,"notes":"<span class='small-italic'>Best Newcomer buzz and theatrical range — prime for scripted development or character-led pilot.</span>"},
-  {"id":7,"name":"Sam Nicoresti","show":"Baby Doomer","about":"High-joke density stand-up with emotional core; deals with trans experience and PTSD.","agent":"Ebdon Management","email":"(via Ebdon)","venues":"Pleasance Courtyard","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/16/sam-nicoresti-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Sam+Nicoresti+Baby+Doomer","developPotential":9,"notes":"<span class='small-italic'>Major award attention — strong profile for touring, specials and development deals.</span>"},
-  {"id":8,"name":"Ryan Mold","show":"Breaking the Mold","about":"Confident storyteller about family, grief and working-class life.","agent":"Unagented","email":"(Fringe / venue contact)","venues":"Hanover Tap / Fringe listings","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/08/29/edfringe-review-ryan-mold-breaking-the-mold/","clip":"https://www.edfringe.com/tickets/whats-on/ryan-mold-breaking-the-mold","developPotential":6,"notes":"<span class='small-italic'>Solid audience-work comic who could anchor a live Avalon night or warm up tours.</span>"},
-  {"id":9,"name":"Britt Migs","show":"Dolphin Mode","about":"Dark, energetic debut mixing personal trauma and musical staging.","agent":"Unagented","email":"(see Fringe profile)","venues":"Buttercup / Fringe rooms","soldOutCount":0,"addedShows":0,"review":"https://theqr.co.uk/2025/07/31/edfringe-review-britt-migs-dolphin-mode/","clip":"https://www.youtube.com/results?search_query=Britt+Migs+comedy","developPotential":6,"notes":"<span class='small-italic'>Strong performative identity; good for alternative cabaret or character shorts.</span>"},
-  {"id":10,"name":"Dylan Adler","show":"Haus of Dy-lan","about":"Theatrical musical-comedy with big staging and feminist overtones.","agent":"Sabina Kashi at CAA","email":"(via Fringe listing)","venues":"Various cabaret rooms","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/28/review-haus-of-dy-lan-dylan-adler-edfringe-2025/","clip":"https://www.youtube.com/results?search_query=Dylan+Adler+Haus+of+Dy-lan","developPotential":7,"notes":"<span class='small-italic'>Theatrical energy and musical chops — strong candidate for a hybrid comedy-drama short.</span>"},
-  {"id":11,"name":"Pedro Leandro","show":"Soft Animal","about":"Polished debut: actor-comic crossover exploring queer identity and validation.","agent":"Independent Talent Group","email":"(via Independent Talent)","venues":"BIGHEAD Comedy / festival slots","soldOutCount":0,"addedShows":0,"review":"https://www.bingefringe.com/2025/08/19/review-pedro-leandro-soft-animal-bighead-comedy-in-association-with-independent-talent-group-edfringe-2025/","clip":"https://www.youtube.com/watch?v=il1KdpeMPK4","developPotential":7,"notes":"<span class='small-italic'>Actor/comic crossover — good for scripted comedy-dramas or character series.</span>"},
-  {"id":12,"name":"Elouise Eftos","show":"Australia's First Attractive Comedian","about":"Provocative, theatrical debut — feminist and performance-led comedy.","agent":"Century Comedy","email":"(via Fringe listing)","venues":"Pleasance Courtyard (Below)","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/21/elouise-eftos-australias-first-attractive-comedian-review-fabulously-provocative-jokes","clip":"https://www.edfringe.com/tickets/whats-on/elouise-eftos-australias-first-attractive-comedian","developPotential":8,"notes":"<span class='small-italic'>Award-winning buzz in Australia — a good candidate for international Avalon showcases.</span>"}
+/* ---------- UTIL ---------- */
+const qs = s=>document.querySelector(s);
+const qsa = s=>Array.from(document.querySelectorAll(s));
+function toast(msg='Saved'){const t=qs('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
+function csvDownload(filename, rows, headers){
+  const data=[headers,...rows].map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([data],{type:'text/csv'}), url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);
+}
+function escapeHtml(s){return String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');}
+
+/* ---------- INTRO REVEAL ---------- */
+function revealMain(){qs('#intro').style.display='none';const mc=qs('#mainContent');mc.style.opacity='1';mc.style.visibility='visible';}
+window.addEventListener('load',()=>{ setTimeout(revealMain,1400); });
+
+/* ---------- TABS ---------- */
+qsa('.tablink').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    qsa('.tablink').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    qsa('.section').forEach(s=>s.classList.remove('active'));
+    qs('#'+btn.dataset.tab).classList.add('active');
+    history.replaceState(null,'','#'+btn.dataset.tab);
+  });
+});
+if(location.hash){const h=location.hash.slice(1);const t=qs(`.tablink[data-tab="${h}"]`); if(t) t.click();}
+document.body.classList.toggle('admin', location.hash.includes('admin'));
+
+/* ---------- DATA ---------- */
+/* Fringe comedians — 12 entries with depth */
+const FRINGE_DEFAULT = [
+  {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Appears to be Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"Strong local sell-outs; warm, character-led writing — good for live special or pilot development."},
+  {"id":2,"name":"Toussaint Douglass","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management (listed)","email":"(agent via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":"","addedShows":"","review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material","developPotential":7,"notes":"Inventive prop work and distinct voice — good for character-led sketch development."},
+  {"id":3,"name":"Amelia Hamilton","show":"Forget Me Not","about":"Gen-Z rap-comedy hybrid using original music and quick gags.","agent":"Appears to be Unagented","email":"amelialouisehamilton@gmail.com","venues":"Pleasance Courtyard (Attic)","soldOutCount":"","addedShows":"","review":"https://www.chortle.co.uk/review/2025/08/01/58633/amelia_hamilton%3A_forget_me_not","clip":"https://www.youtube.com/results?search_query=Amelia+Hamilton+Forget+Me+Not","developPotential":6,"notes":"Musical/character bits could expand into sketches or a short-form series."},
+  {"id":4,"name":"Ola Labib","show":"Dispersible","about":"Ex-NHS pharmacist: sharp satire on TV industry & diaspora life.","agent":"UTC Artist Management","email":"(publicist via listings)","venues":"Soho Theatre / circuits","soldOutCount":"","addedShows":"","review":"https://sohotheatre.com/events/ola-labib-dispersible/","clip":"https://www.youtube.com/watch?v=K3_oxIzhrF4","developPotential":9,"notes":"Has TV credits; candidate for scripted comedy development."},
+  {"id":5,"name":"Cat Cohen","show":"Broad Strokes","about":"Cabaret-comedy blend: songs + stand-up and character work with big stagecraft.","agent":"CAA (US)","email":"(via site)","venues":"Pleasance Courtyard / cabaret slots","soldOutCount":"","addedShows":"","review":"https://www.theguardian.com/stage/2025/aug/06/cat-cohen-broad-strokes-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Cat+Cohen+comedy","developPotential":8,"notes":"Musical storytelling—good for live special or hybrid TV format."},
+  {"id":6,"name":"Ayoade Bamgboye","show":"Swings and Roundabouts","about":"Commanding debut mixing accents, character work and dramatic comedy.","agent":"Independent Talent Group","email":"(via ITG)","venues":"Pleasance Courtyard","soldOutCount":"","addedShows":"","review":"https://www.theguardian.com/stage/2025/aug/17/ayoade-bamgboye-swings-and-roundabouts-review-commanding-comics-thrilling-debut","clip":"https://www.edfringe.com/tickets/whats-on/ayoade-bamgboye-swings-and-roundabouts","developPotential":9,"notes":"Best Newcomer buzz & theatrical range — prime for scripted development."},
+  {"id":7,"name":"Sam Nicoresti","show":"Baby Doomer","about":"High-joke-density stand-up with emotional core; trans experience & PTSD.","agent":"Ebdon Management","email":"(via Ebdon)","venues":"Pleasance Courtyard","soldOutCount":"","addedShows":"","review":"https://www.theguardian.com/stage/2025/aug/16/sam-nicoresti-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Sam+Nicoresti+Baby+Doomer","developPotential":9,"notes":"Major award attention — strong profile for specials & development."},
+  {"id":8,"name":"Ryan Mold","show":"Breaking the Mold","about":"Confident storyteller about family, grief and working-class life.","agent":"Appears to be Unagented","email":"(via Fringe/venue)","venues":"Hanover Tap / Fringe rooms","soldOutCount":"","addedShows":"","review":"https://theqr.co.uk/2025/08/29/edfringe-review-ryan-mold-breaking-the-mold/","clip":"https://www.edfringe.com/tickets/whats-on/ryan-mold-breaking-the-mold","developPotential":6,"notes":"Solid audience-work; good for hosting Avalon live nights."},
+  {"id":9,"name":"Britt Migs","show":"Dolphin Mode","about":"Dark, energetic debut mixing personal trauma and musical staging.","agent":"Appears to be Unagented","email":"(via Fringe)","venues":"Buttercup / Fringe rooms","soldOutCount":"","addedShows":"","review":"https://theqr.co.uk/2025/07/31/edfringe-review-britt-migs-dolphin-mode/","clip":"https://www.youtube.com/results?search_query=Britt+Migs+comedy","developPotential":6,"notes":"Distinct performative identity; good for alt cabaret or character shorts."},
+  {"id":10,"name":"Dylan Adler","show":"Haus of Dy-lan","about":"Theatrical musical-comedy with big staging and feminist overtones.","agent":"CAA","email":"(via listing)","venues":"Cabaret rooms","soldOutCount":"","addedShows":"","review":"https://www.bingefringe.com/2025/08/28/review-haus-of-dy-lan-dylan-adler-edfringe-2025/","clip":"https://www.youtube.com/results?search_query=Dylan+Adler+Haus+of+Dy-lan","developPotential":7,"notes":"Theatrical energy & musical chops — good hybrid short."},
+  {"id":11,"name":"Pedro Leandro","show":"Soft Animal","about":"Polished debut: actor-comic crossover exploring queer identity & validation.","agent":"Independent Talent Group","email":"(via ITG)","venues":"BIGHEAD Comedy / assoc. with ITG","soldOutCount":"","addedShows":"","review":"https://www.bingefringe.com/2025/08/19/review-pedro-leandro-soft-animal-bighead-comedy-in-association-with-independent-talent-group-edfringe-2025/","clip":"https://www.youtube.com/watch?v=il1KdpeMPK4","developPotential":7,"notes":"Actor/comic crossover — good for comedy-drama roles."},
+  {"id":12,"name":"Elouise Eftos","show":"Australia's First Attractive Comedian","about":"Provocative, theatrical debut — feminist, performance-led.","agent":"Century Comedy (AU)","email":"(via listing)","venues":"Pleasance Courtyard (Below)","soldOutCount":"","addedShows":"","review":"https://www.theguardian.com/stage/2025/aug/21/elouise-eftos-australias-first-attractive-comedian-review-fabulously-provocative-jokes","clip":"https://www.edfringe.com/tickets/whats-on/elouise-eftos-australias-first-attractive-comedian","developPotential":8,"notes":"Award buzz in AU — good for international showcases."}
 ];
 
-const BUILTIN_social = [
-  {"id":1,"name":"Munya Chawawa","platform":"Instagram / TikTok","followers":"IG ≈1M / TikTok ≈1.8M","style":"Satirical sketches","links":"https://www.instagram.com/munyachawawa/ | https://www.tiktok.com/@munyachawawa","Score":9,"notes":"<span class='small-italic'>Highly shareable satire; editorial-ready.</span>"},
-  {"id":2,"name":"Safro","platform":"Instagram / TikTok","followers":"IG ≈167k","style":"Character sketches / writer","links":"https://www.instagram.com/somalisafro/","Score":8,"notes":"<span class='small-italic'>Strong UK-based creator voice.</span>"},
-  {"id":3,"name":"Joa Brown","platform":"Instagram","followers":"≈81k","style":"Relatable sketches","links":"https://www.instagram.com/joa.brown/","Score":7,"notes":"<span class='small-italic'>Good engagement, niche audience.</span>"}
+/* Social comedians (starter set; numbers indicative) */
+const SOCIAL_DEFAULT = [
+  {"name":"Munya Chawawa","platform":"Instagram/TikTok/YouTube","followers":"3M+ combined","engagement":"High (satire/sketch)","links":"https://www.instagram.com/munyachawawa/","notes":"Viral topical satire; crossover TV credits."},
+  {"name":"Lucia Keskin (Chi with a C)","platform":"YouTube/Instagram","followers":"1M+","engagement":"High (character)","links":"https://www.youtube.com/@chiwithac/","notes":"Character-led; BBC crossovers."},
+  {"name":"Tyrell Charles","platform":"TikTok/Instagram","followers":"1M+","engagement":"High","links":"https://www.tiktok.com/@tyrell.charles","notes":"POV sketches; strong retention."},
+  {"name":"Max Fosh","platform":"YouTube","followers":"2M+","engagement":"Med-High","links":"https://www.youtube.com/@MaxFosh","notes":"Situational stunts; docu-comedy potential."},
+  {"name":"Niko Omilana","platform":"YouTube","followers":"6M+","engagement":"High","links":"https://www.youtube.com/@Niko","notes":"Satirical stunts; large youth reach."},
+  {"name":"Amelia Dimoldenberg","platform":"YouTube/IG","followers":"3M+","engagement":"High","links":"https://www.youtube.com/@chicken_shop_date","notes":"Interview comedy; strong brand collabs."},
+  {"name":"Safro","platform":"Instagram/TikTok","followers":"500k+","engagement":"High","links":"https://www.instagram.com/safrosatire/","notes":"Character satire; shortform native."},
+  {"name":"Joanita Brown","platform":"Instagram/TikTok","followers":"300k+","engagement":"High","links":"https://www.instagram.com/joanitabrownofficial/","notes":"Strong repeatable characters."}
 ];
 
-const BUILTIN_plays = [
-  {"id":1,"title":"The Mirror Room","playwright":"Jane Doe","director":"Samantha Lee","theatre":"National Theatre","genre":"Drama","reviews":"https://www.theguardian.com/stage/2025/aug/10/the-mirror-room-review","Score":8,"notes":"<span class='small-italic'>Critically acclaimed; strong ensemble + visual language.</span>"},
-  {"id":2,"title":"Laugh Lines","playwright":"John Smith","director":"Tom Rivers","theatre":"King's Head Theatre","genre":"Comedy","reviews":"https://www.timeout.com/london/theatre/laugh-lines-review","Score":7,"notes":"<span class='small-italic'>Audience winner — laughs + character work.</span>"}
+/* London plays (sample) */
+const PLAYS_DEFAULT = [
+  {"title":"The Motive and the Cue","playwright":"Jack Thorne","director":"Sam Mendes","theatre":"Noël Coward Theatre","dates":"Current Run","links":"https://www.noelcowardtheatre.co.uk/","notes":"Behind-the-scenes drama; awards buzz."},
+  {"title":"Standing at the Sky’s Edge","playwright":"Chris Bush (book)","director":"Robert Hastie","theatre":"Gillian Lynne Theatre","dates":"Current Run","links":"https://lwtheatres.co.uk/","notes":"Musical; contemporary, critical hit."},
+  {"title":"The Effect","playwright":"Lucy Prebble","director":"Jamie Lloyd","theatre":"National Theatre (Lyttelton)","dates":"Current/Returning","links":"https://www.nationaltheatre.org.uk/","notes":"Relationship+science; sleek staging."},
+  {"title":"Nye","playwright":"Tim Price","director":"Rufus Norris","theatre":"National Theatre","dates":"Season","links":"https://www.nationaltheatre.org.uk/","notes":"Biographical drama; political resonance."},
+  {"title":"The Play That Goes Wrong","playwright":"Mischief","director":"Mark Bell","theatre":"Duchess Theatre","dates":"Ongoing","links":"https://www.theplaythatgoeswrong.com/","notes":"Long-running farce; mainstream appeal."}
 ];
 
-const BUILTIN_books = [
-  {"id":1,"title":"Yellowface","author":"R.F. Kuang","genre":"Satirical drama","trending":"BookTok debates & controversy","links":"https://www.tiktok.com/tag/yellowface","Score":8},
-  {"id":2,"title":"The Viral Life","author":"Alice Page","genre":"Contemporary","trending":"BookTok microfiction trend","links":"#","Score":7}
+/* Books (BookTok heat) */
+const BOOKS_DEFAULT = [
+  {"title":"Fourth Wing","author":"Rebecca Yarros","genre":"Romantasy","links":"https://www.goodreads.com/book/show/61431922","notes":"BookTok juggernaut; TV rights buzz."},
+  {"title":"Iron Flame","author":"Rebecca Yarros","genre":"Romantasy","links":"https://www.goodreads.com/book/show/61431924","notes":"Sequel momentum; huge fandom."},
+  {"title":"Yellowface","author":"R.F. Kuang","genre":"Literary satire","links":"https://www.goodreads.com/book/show/62884860","notes":"Media discourse; adaptation chatter."},
+  {"title":"The Seven Husbands of Evelyn Hugo","author":"Taylor Jenkins Reid","genre":"Historical/romance","links":"https://www.goodreads.com/book/show/32620332","notes":"Sustained social buzz; screen dev interest."},
+  {"title":"A Court of Thorns and Roses","author":"Sarah J. Maas","genre":"Fantasy romance","links":"https://www.goodreads.com/book/show/16096824","notes":"Massive series; evergreen TikTok presence."}
 ];
 
-/* localStorage helpers & seeding */
-const STORAGE_PREFIX = 'avalon_pipeline_v1_';
-function saveToLocal(key,val){ try{ localStorage.setItem(STORAGE_PREFIX+key, JSON.stringify(val)); }catch(e){ console.warn(e); } }
-function loadFromLocal(key){ try{ const r = localStorage.getItem(STORAGE_PREFIX+key); return r ? JSON.parse(r) : null; }catch(e){ console.warn(e); return null; } }
-function resetBuiltIn(){ saveToLocal('fringe', BUILTIN_fringe); saveToLocal('social', BUILTIN_social); saveToLocal('plays', BUILTIN_plays); saveToLocal('books', BUILTIN_books); loadAllAndRender(); }
-if(!loadFromLocal('fringe')) resetBuiltIn();
+/* ---------- STATE (localStorage-backed) ---------- */
+function loadState(key, fallback){ try{ const raw=localStorage.getItem(key); return raw? JSON.parse(raw): structuredClone(fallback);}catch{ return structuredClone(fallback); } }
+let FRINGE = loadState('avalon_fringe', FRINGE_DEFAULT);
+let SOCIAL = loadState('avalon_social', SOCIAL_DEFAULT);
+let PLAYS  = loadState('avalon_plays',  PLAYS_DEFAULT);
+let BOOKS  = loadState('avalon_books',  BOOKS_DEFAULT);
 
-/* runtime arrays */
-let fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice();
-let socialDATA = loadFromLocal('social') || BUILTIN_social.slice();
-let playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice();
-let booksDATA = loadFromLocal('books') || BUILTIN_books.slice();
-
-/* rendering helpers */
-function renderFringeTable(rows){ const tbody=document.getElementById('fringe-body'); tbody.innerHTML=''; rows.forEach((r,idx)=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3">${idx+1}</td><td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3 italic">${r.show||''}</td><td class="px-3 py-3 max-w-xs">${r.about||''}<div class="mt-1">${r.notes||''}</div></td><td class="px-3 py-3">${r.venues||''}</td><td class="px-3 py-3">${r.agent||''}<div class="text-sm">${r.email||''}</div></td><td class="px-3 py-3"><div class="flex flex-col gap-1">${r.review?`<a class="link" target="_blank" href="${r.review}">Read review</a>`:''}${r.clip?`<a class="link" target="_blank" href="${r.clip}">Watch clip</a>`:''}</div></td><td class="px-3 py-3">${(r.soldOutCount||'—')} / ${(r.addedShows||'—')}</td><td class="px-3 py-3">${r.developPotential ?? ''}</td>`; tbody.appendChild(tr); });}
-function renderSocialTable(rows){ const tbody=document.getElementById('social-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3">${r.platform||''}</td><td class="px-3 py-3">${r.followers||''}</td><td class="px-3 py-3">${r.style||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
-function renderPlaysTable(rows){ const tbody=document.getElementById('plays-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.playwright||''}</td><td class="px-3 py-3">${r.director||''}</td><td class="px-3 py-3">${r.theatre||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.reviews?`<a class="link" href="${r.reviews}" target="_blank">Read</a>`:''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
-function renderBooksTable(rows){ const tbody=document.getElementById('books-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.author||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.trending||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td>`; tbody.appendChild(tr); });}
-function loadAllAndRender(){ fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice(); socialDATA = loadFromLocal('social') || BUILTIN_social.slice(); playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice(); booksDATA = loadFromLocal('books') || BUILTIN_books.slice(); applyFringeFilters(); renderSocialTable(socialDATA); renderPlaysTable(playsDATA); renderBooksTable(booksDATA); }
-
-/* filtering + CSV */
-function applyFringeFilters(){ const q=(document.getElementById('fringe-search').value||'').toLowerCase(); const minScore=Number(document.getElementById('fringe-minScore').value)||0; const sortBy=document.getElementById('fringe-sortBy').value; const order=document.getElementById('fringe-order').value; let rows=(fringeDATA||[]).filter(r => (r.name||'').toLowerCase().includes(q) || (r.show||'').toLowerCase().includes(q)); rows = rows.filter(r => (r.developPotential || 0) >= minScore); rows.sort((a,b)=>{ const get=(o)=> sortBy==='developPotential' ? (o.developPotential||0) : (sortBy==='soldOutCount' ? (o.soldOutCount||0) : (o.addedShows||0)); const A=get(a), B=get(b); return order==='desc' ? (B-A) : (A-B); }); renderFringeTable(rows); }
-function downloadCsvFromArray(filename, header, rows){ const csvRows=[header].concat(rows.map(r => header.map(h => { const key = {'Name':'name','Show':'show','About':'about','Agent / Email':'agent','Venues':'venues','Review / Clip':'review','Sold / Added':'soldAdded','Score':'developPotential','Notes':'notes','Title':'title','Playwright':'playwright','Director':'director','Theatre':'theatre','Genre':'genre','Reviews':'reviews','Followers':'followers','Platform':'platform','Links':'links','Author':'author'}[h]||h); return String(r[key] ?? '').replace(/"/g,'""'); }))); const csv = csvRows.map(r => r.map(c => `"${c}"`).join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
-
-/* UI wiring */
-document.getElementById('fringe-search').addEventListener('input', applyFringeFilters);
-document.getElementById('fringe-minScore').addEventListener('change', applyFringeFilters);
-document.getElementById('fringe-sortBy').addEventListener('change', applyFringeFilters);
-document.getElementById('fringe-order').addEventListener('change', applyFringeFilters);
-document.getElementById('fringe-reset').addEventListener('click', ()=>{ document.getElementById('fringe-search').value=''; document.getElementById('fringe-minScore').value=''; document.getElementById('fringe-sortBy').value='developPotential'; document.getElementById('fringe-order').value='desc'; applyFringeFilters(); });
-document.getElementById('fringe-csv').addEventListener('click', ()=>{ downloadCsvFromArray('fringe.csv', ["Name","Show","About","Agent / Email","Venues","Review / Clip","Sold / Added","Score","Notes"], fringeDATA); });
-
-/* social */
-function parseFollowers(str){ if(!str) return 0; const m=(str+'').replace(/,/g,'').match(/(\d+(\.\d+)?)([kKmM]?)/); if(!m) return 0; let num=parseFloat(m[1]); const unit=(m[3]||'').toLowerCase(); if(unit==='k') num*=1000; if(unit==='m') num*=1000000; return num; }
-document.getElementById('social-search').addEventListener('input', ()=>{ const q=(document.getElementById('social-search').value||'').toLowerCase(); const sortBy=document.getElementById('social-sortBy').value; const order=document.getElementById('social-order').value; let rows=socialDATA.filter(s => (s.name||'').toLowerCase().includes(q) || (s.platform||'').toLowerCase().includes(q)); rows.sort((a,b)=>{ const A=(sortBy==='Followers'?parseFollowers(a.followers):(a.Score||0)); const B=(sortBy==='Followers'?parseFollowers(b.followers):(b.Score||0)); return order==='desc'? (B-A) : (A-B); }); renderSocialTable(rows); });
-document.getElementById('social-reset').addEventListener('click', ()=>{ document.getElementById('social-search').value=''; document.getElementById('social-sortBy').value='Score'; document.getElementById('social-order').value='desc'; document.getElementById('social-search').dispatchEvent(new Event('input')); });
-document.getElementById('social-csv').addEventListener('click', ()=>{ downloadCsvFromArray('social.csv', ["Name","Platform","Followers","Style","Links","Score","Notes"], socialDATA); });
-
-/* plays */
-document.getElementById('plays-search').addEventListener('input', ()=>{ const q=(document.getElementById('plays-search').value||'').toLowerCase(); let rows=playsDATA.filter(p => (p.title||'').toLowerCase().includes(q) || (p.playwright||'').toLowerCase().includes(q) || (p.theatre||'').toLowerCase().includes(q) || (p.director||'').toLowerCase().includes(q)); renderPlaysTable(rows); });
-document.getElementById('plays-reset').addEventListener('click', ()=>{ document.getElementById('plays-search').value=''; document.getElementById('plays-search').dispatchEvent(new Event('input')); });
-document.getElementById('plays-csv').addEventListener('click', ()=>{ downloadCsvFromArray('plays.csv', ["Title","Playwright","Director","Theatre","Genre","Reviews","Score","Notes"], playsDATA); });
-
-/* books */
-document.getElementById('books-search').addEventListener('input', ()=>{ const q=(document.getElementById('books-search').value||'').toLowerCase(); let rows=booksDATA.filter(b => (b.title||'').toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q)); renderBooksTable(rows); });
-document.getElementById('books-reset').addEventListener('click', ()=>{ document.getElementById('books-search').value=''; document.getElementById('books-search').dispatchEvent(new Event('input')); });
-document.getElementById('books-csv').addEventListener('click', ()=>{ downloadCsvFromArray('books.csv', ["Title","Author","Genre","Trending","Links","Score"], booksDATA); });
-
-/* initial render */
-loadAllAndRender();
-
-/* navigation */
-function navigate(id){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active')); const el=document.getElementById(id); if(el) el.classList.add('section-active'); history.pushState(null,'','#'+id); window.scrollTo({top:0,behavior:'smooth'}); }
-document.querySelectorAll('a[href^="#"]').forEach(a=> a.addEventListener('click', (e)=>{ e.preventDefault(); const t=a.getAttribute('href').slice(1); navigate(t); }));
-document.getElementById('goHome').addEventListener('click', ()=> navigate('home'));
-
-/* Admin modal wiring */
-const ADMIN_PASSWORD = 'avalon-intern-2025';
-document.getElementById('openAdminBtn').addEventListener('click', ()=>{ const p = prompt('Enter admin password to edit data (local only):'); if(p === ADMIN_PASSWORD) openAdmin(); else if(p!==null) alert('Wrong password.'); });
-function openAdmin(){ document.getElementById('adminFringe').value = JSON.stringify(fringeDATA,null,2); document.getElementById('adminSocial').value = JSON.stringify(socialDATA,null,2); document.getElementById('adminPlays').value = JSON.stringify(playsDATA,null,2); document.getElementById('adminBooks').value = JSON.stringify(booksDATA,null,2); document.getElementById('adminModal').style.display='flex'; }
-document.getElementById('adminClose').addEventListener('click', ()=>{ document.getElementById('adminModal').style.display='none'; });
-document.getElementById('adminReset').addEventListener('click', ()=>{ if(confirm('Reset local data to built-in defaults?')) resetBuiltIn(); });
-document.getElementById('saveFringe').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminFringe').value); fringeDATA = val; saveToLocal('fringe', fringeDATA); applyFringeFilters(); alert('Fringe saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
-document.getElementById('loadFringe').addEventListener('click', ()=> document.getElementById('adminFringe').value = JSON.stringify(loadFromLocal('fringe') || fringeDATA, null, 2));
-document.getElementById('saveSocial').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminSocial').value); socialDATA = val; saveToLocal('social', socialDATA); renderSocialTable(socialDATA); alert('Social saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
-document.getElementById('loadSocial').addEventListener('click', ()=> document.getElementById('adminSocial').value = JSON.stringify(loadFromLocal('social') || socialDATA, null, 2));
-document.getElementById('savePlays').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminPlays').value); playsDATA = val; saveToLocal('plays', playsDATA); renderPlaysTable(playsDATA); alert('Plays saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
-document.getElementById('loadPlays').addEventListener('click', ()=> document.getElementById('adminPlays').value = JSON.stringify(loadFromLocal('plays') || playsDATA, null, 2));
-document.getElementById('saveBooks').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminBooks').value); booksDATA = val; saveToLocal('books', booksDATA); renderBooksTable(booksDATA); alert('Books saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
-document.getElementById('loadBooks').addEventListener('click', ()=> document.getElementById('adminBooks').value = JSON.stringify(loadFromLocal('books') || booksDATA, null, 2));
-
-/* Effects toggle UI */
-const effectsToggleBtn = document.getElementById('effectsToggleBtn');
-const effectsMenu = document.getElementById('effectsMenu');
-const nebulaCheckbox = document.getElementById('nebulaCheckbox');
-const twinkleCheckbox = document.getElementById('twinkleCheckbox');
-const starsCheckbox = document.getElementById('starsCheckbox');
-effectsToggleBtn.addEventListener('click', ()=> { effectsMenu.style.display = effectsMenu.style.display === 'block' ? 'none' : 'block'; });
-
-const effectsState = loadFromLocal('effectsState') || { nebula:true, twinkles:true, stars:true, presentation:false };
-nebulaCheckbox.checked = effectsState.nebula; twinkleCheckbox.checked = effectsState.twinkles; starsCheckbox.checked = effectsState.stars;
-applyEffectsFromState();
-nebulaCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
-twinkleCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
-starsCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
-function saveEffectsState(){ const s = { nebula:nebulaCheckbox.checked, twinkles:twinkleCheckbox.checked, stars:starsCheckbox.checked, presentation: document.body.classList.contains('presentation') }; saveToLocal('effectsState', s); }
-function applyEffectsFromState(){ document.getElementById('nebulaLayer').style.display = nebulaCheckbox.checked ? 'block' : 'none'; document.getElementById('twinkleLayer').style.display = twinkleCheckbox.checked ? 'block' : 'none'; document.getElementById('staticStars').style.display = starsCheckbox.checked ? 'block' : 'none'; }
-
-/* Presentation toggle */
-const presentationBtn = document.getElementById('presentationBtn');
-presentationBtn.addEventListener('click', ()=>{ const now = document.body.classList.toggle('presentation'); presentationBtn.textContent = now ? 'Presentation ✓' : 'Presentation'; saveEffectsState(); });
-
-/* Export JSON */
-document.getElementById('exportBtn').addEventListener('click', ()=>{ const snapshot = { exportedAt: new Date().toISOString(), fringe: fringeDATA, social: socialDATA, plays: playsDATA, books: booksDATA }; const blob = new Blob([JSON.stringify(snapshot,null,2)], { type:'application/json' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download = `avalon_pipeline_snapshot_${(new Date()).toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); });
-
-/* Robust intro + reveal with replay control */
-function revealMainContent(force){
-  try{
-    const intro = document.getElementById('intro');
-    const mainContent = document.getElementById('mainContent');
-    if(intro){ intro.style.display = 'none'; intro.style.visibility='hidden'; intro.style.pointerEvents='none'; }
-    if(mainContent){
-      mainContent.style.visibility = 'visible';
-      mainContent.style.pointerEvents = 'auto';
-      setTimeout(()=> { mainContent.style.opacity = '1'; }, 20);
-      mainContent.removeAttribute('aria-hidden');
-    }
-    const target = (location.hash || '#home').slice(1);
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('section-active'));
-    const dest = document.getElementById(target) || document.getElementById('home');
-    if(dest) dest.classList.add('section-active');
-    window.scrollTo({ top: 0, behavior: 'auto' });
-    console.info('Intro: site revealed');
-  } catch (err){
-    console.error('Intro reveal error:', err);
-    try{ document.getElementById('intro').style.display='none'; }catch(e){} try{ document.getElementById('mainContent').style.opacity='1'; }catch(e){} try{ document.getElementById('home').classList.add('section-active'); }catch(e){}
-  }
+/* ---------- RENDERERS ---------- */
+function renderFringe(){
+  const q = qs('#fSearch').value.toLowerCase();
+  const min = Number(qs('#fMin').value) || 0;
+  const sortBy = qs('#fSort').value; const order = qs('#fOrder').value;
+  let rows = FRINGE.filter(d => (d.name+d.show).toLowerCase().includes(q));
+  rows = rows.filter(d => (+d.developPotential||0) >= min);
+  rows.sort((a,b)=>{
+    const A = (a[sortBy]??0)||0; const B=(b[sortBy]??0)||0;
+    return order==='desc' ? (B-A) : (A-B);
+  });
+  const tb = qs('#fringeTbl tbody'); tb.innerHTML='';
+  rows.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td contenteditable>${escapeHtml(d.name)}</td>
+      <td contenteditable><em>${escapeHtml(d.show)}</em></td>
+      <td contenteditable>${escapeHtml(d.about)}<div class="note"><em>${escapeHtml(d.notes||'')}</em></div></td>
+      <td contenteditable>${escapeHtml(d.venues||'')}</td>
+      <td contenteditable>${escapeHtml(d.agent||'')}<div class="note">${escapeHtml(d.email||'')}</div></td>
+      <td>
+        <div><a target="_blank" href="${d.review}">Read review</a></div>
+        <div><a target="_blank" href="${d.clip}">Watch clip / listing</a></div>
+      </td>
+      <td contenteditable>${d.soldOutCount||'—'} / ${d.addedShows||'—'}</td>
+      <td contenteditable>${d.developPotential||''}</td>`;
+    tr.dataset.id = d.id;
+    tb.appendChild(tr);
+  });
+}
+function renderSocial(){
+  const q=qs('#sSearch').value.toLowerCase(), tb=qs('#socialTbl tbody'); tb.innerHTML='';
+  SOCIAL.filter(d=>(d.name+d.platform).toLowerCase().includes(q)).forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `
+      <td contenteditable>${escapeHtml(d.name)}</td>
+      <td contenteditable>${escapeHtml(d.platform)}</td>
+      <td contenteditable>${escapeHtml(d.followers)}</td>
+      <td contenteditable>${escapeHtml(d.engagement)}</td>
+      <td contenteditable><a target="_blank" href="${d.links}">${escapeHtml(d.links)}</a></td>
+      <td contenteditable><em>${escapeHtml(d.notes||'')}</em></td>`;
+    tb.appendChild(tr);
+  });
+}
+function renderPlays(){
+  const q=qs('#pSearch').value.toLowerCase(), tb=qs('#playsTbl tbody'); tb.innerHTML='';
+  PLAYS.filter(d=>(d.title+d.playwright+d.theatre).toLowerCase().includes(q)).forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td contenteditable>${escapeHtml(d.title)}</td>
+      <td contenteditable>${escapeHtml(d.playwright)}</td>
+      <td contenteditable>${escapeHtml(d.director||'')}</td>
+      <td contenteditable>${escapeHtml(d.theatre)}</td>
+      <td contenteditable>${escapeHtml(d.dates||'')}</td>
+      <td contenteditable><a target="_blank" href="${d.links}">${escapeHtml(d.links)}</a></td>
+      <td contenteditable><em>${escapeHtml(d.notes||'')}</em></td>`;
+    tb.appendChild(tr);
+  });
+}
+function renderBooks(){
+  const q=qs('#bSearch').value.toLowerCase(), tb=qs('#booksTbl tbody'); tb.innerHTML='';
+  BOOKS.filter(d=>(d.title+d.author).toLowerCase().includes(q)).forEach(d=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td contenteditable>${escapeHtml(d.title)}</td>
+      <td contenteditable>${escapeHtml(d.author)}</td>
+      <td contenteditable>${escapeHtml(d.genre)}</td>
+      <td contenteditable><a target="_blank" href="${d.links}">${escapeHtml(d.links)}</a></td>
+      <td contenteditable><em>${escapeHtml(d.notes||'')}</em></td>`;
+    tb.appendChild(tr);
+  });
 }
 
-function resetIntroAnimations(){
-  const dot = document.getElementById('introDot');
-  const line = document.getElementById('introLine');
-  const burst = document.getElementById('introBurst');
-  if(dot){ dot.style.animation = 'none'; /* force reflow */ void dot.offsetWidth; }
-  if(line){ line.style.animation = 'none'; void line.offsetWidth; }
-  if(burst){ burst.style.animation = 'none'; void burst.offsetWidth; }
-  // clear inline styles for fresh start
-  if(dot){ dot.style.opacity = 0; dot.style.transform = 'scale(.2)'; }
-  if(line){ line.style.opacity = 0; line.style.width = '6%'; line.style.left = '47%'; }
-  if(burst){ burst.style.opacity = 0; burst.style.transform = 'scale(.18)'; }
-}
-
-function playIntroAndReveal(ignoreSeen=false){
-  const intro = document.getElementById('intro');
-  const mainContent = document.getElementById('mainContent');
-  const dot = document.getElementById('introDot');
-  const line = document.getElementById('introLine');
-  const burst = document.getElementById('introBurst');
-
-  if(!intro || !mainContent || !dot || !line || !burst){
-    revealMainContent(true);
-    return;
-  }
-
-  // begin with main hidden
-  mainContent.style.opacity = 0;
-  mainContent.style.visibility = 'hidden';
-  mainContent.style.pointerEvents = 'none';
-  intro.style.display = 'flex';
-
-  // Reset animations so replay works
-  resetIntroAnimations();
-
-  // Short timings (total around ~850ms)
-  // Start dot pulse (CSS keyframe)
-  dot.style.animation = 'dotPulse .6s ease-in-out forwards';
-
-  // After 180ms, start the line (so dot stretches into line)
-  setTimeout(()=> {
-    line.style.animation = 'lineGrow .75s cubic-bezier(.2,.9,.2,1) forwards';
-    line.style.left = '0%';
-  }, 180);
-
-  // After 420ms, trigger the burst to overlap
-  setTimeout(()=> {
-    burst.style.animation = 'burstShow .65s cubic-bezier(.2,.95,.2,1) forwards';
-  }, 420);
-
-  // Reveal slightly after burst completes
-  const revealAfter = 900; // ms
-  setTimeout(()=> {
-    revealMainContent();
-    if(!ignoreSeen){ try { localStorage.setItem('seenIntro_v1', 'true'); } catch(e){} }
-  }, revealAfter);
-
-  // Safety fallback
-  setTimeout(()=> {
-    const stillHidden = (mainContent && (getComputedStyle(mainContent).opacity === '0' || mainContent.style.visibility === 'hidden'));
-    if(stillHidden){
-      console.warn('Intro safety fallback: forcing reveal');
-      revealMainContent(true);
-    }
-  }, 1500);
-}
-
-/* Decide whether to auto-play intro on first visit */
-try{
-  const seen = !!localStorage.getItem('seenIntro_v1');
-  if(!seen){
-    playIntroAndReveal(false);
-  } else {
-    // skip intro and show site
-    const introEl = document.getElementById('intro'); if(introEl) introEl.style.display='none';
-    const mainContent = document.getElementById('mainContent'); if(mainContent){ mainContent.style.visibility='visible'; mainContent.style.pointerEvents='auto'; mainContent.style.opacity='1'; }
-    const target = (location.hash || '#home').slice(1);
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active'));
-    const dest = document.getElementById(target) || document.getElementById('home'); if(dest) dest.classList.add('section-active');
-  }
-}catch(e){ console.error('Intro control error', e); try{ document.getElementById('intro').style.display='none'; }catch(e){} try{ document.getElementById('mainContent').style.opacity='1'; }catch(e){} try{ document.getElementById('home').classList.add('section-active'); }catch(e){} }
-
-/* Replay Intro button: replay but don't clear the "seen" flag (so auto-play stays single-run) */
-document.getElementById('replayIntroBtn').addEventListener('click', ()=> {
-  // Force replay regardless of seen flag
-  playIntroAndReveal(true); // pass true to avoid toggling the seen flag
+/* ---------- BINDINGS ---------- */
+['fSearch','fMin','fSort','fOrder'].forEach(id=>qs('#'+id).addEventListener('input',renderFringe));
+qs('#fCsv').addEventListener('click',()=>{
+  const rows = FRINGE.map(d=>[d.name,d.show,d.about,d.agent,d.email,d.venues,d.soldOutCount||'',d.addedShows||'',d.review,d.clip,d.developPotential,d.notes]);
+  csvDownload('fringe.csv', rows, ["Name","Show","About","Agent","Email","Venues","SoldOut","Added","Review","Clip","Score","Notes"]);
+});
+qs('#sSearch').addEventListener('input',renderSocial);
+qs('#sCsv').addEventListener('click',()=>{
+  const rows = SOCIAL.map(d=>[d.name,d.platform,d.followers,d.engagement,d.links,d.notes]);
+  csvDownload('social-comedians.csv', rows, ["Name","Platform","Followers","Engagement","Links","Notes"]);
+});
+qs('#pSearch').addEventListener('input',renderPlays);
+qs('#pCsv').addEventListener('click',()=>{
+  const rows = PLAYS.map(d=>[d.title,d.playwright,d.director||'',d.theatre,d.dates||'',d.links,d.notes||'']);
+  csvDownload('london-plays.csv', rows, ["Title","Playwright","Director","Theatre","Dates","Links","Notes"]);
+});
+qs('#bSearch').addEventListener('input',renderBooks);
+qs('#bCsv').addEventListener('click',()=>{
+  const rows = BOOKS.map(d=>[d.title,d.author,d.genre,d.links,d.notes]);
+  csvDownload('books.csv', rows, ["Title","Author","Genre","Links","Notes"]);
 });
 
-/* ensure render after admin updates */
-window.addEventListener('storage', ()=> loadAllAndRender());
+/* ---------- ADMIN INLINE EDIT ---------- */
+const isAdmin = location.hash.includes('admin');
+if(isAdmin){
+  document.body.classList.add('admin');
+  let editing=false;
+  const toggle=()=>{ editing=!editing; document.body.classList.toggle('editing',editing); qsa('[contenteditable]').forEach(el=>el.setAttribute('contenteditable',editing?'true':'false')); };
+  qs('#toggleEdit').addEventListener('click',toggle);
+  qs('#cancelEdit').addEventListener('click',()=>{ editing=false; document.body.classList.remove('editing'); qsa('[contenteditable]').forEach(el=>el.setAttribute('contenteditable','false')); renderAll(); });
+  qs('#saveEdit').addEventListener('click',()=>{
+    // Re-scan tables back into arrays (simple mapper by column order)
+    // Fringe
+    const fRows = qsa('#fringeTbl tbody tr');
+    FRINGE = Array.from(fRows).map((tr,idx)=>{
+      const tds = tr.children;
+      const name = tds[1].innerText.trim();
+      const show = tds[2].innerText.trim().replace(/^(\*|_)?|(\*|_)?$/g,'');
+      const about = tds[3].childNodes[0].textContent.trim();
+      const notes = (tds[3].querySelector('.note')?.innerText||'').replace(/^(\*|_)?|(\*|_)?$/g,'');
+      const venues = tds[4].innerText.trim();
+      const agentBlock = tds[5].innerText.trim().split('\n');
+      const agent = agentBlock[0]||'';
+      const email = agentBlock[1]||'';
+      const soldAdded = tds[7].innerText.trim();
+      const [soldOutCount, addedShows] = soldAdded.split('/').map(s=>s? s.trim(): '');
+      const score = tds[8].innerText.trim();
+      const review = tr.querySelector('td:nth-child(7) a:nth-child(1)')?.getAttribute('href')||'';
+      const clip = tr.querySelector('td:nth-child(7) a:nth-child(2)')?.getAttribute('href')||'';
+      return { id: idx+1, name, show, about, agent, email, venues, soldOutCount, addedShows, review, clip, developPotential: score, notes };
+    });
+    localStorage.setItem('avalon_fringe', JSON.stringify(FRINGE));
+
+    // Social
+    const sRows = qsa('#socialTbl tbody tr');
+    SOCIAL = Array.from(sRows).map(tr=>{
+      const tds=tr.children;
+      return { name:tds[0].innerText.trim(), platform:tds[1].innerText.trim(), followers:tds[2].innerText.trim(), engagement:tds[3].innerText.trim(), links:tds[4].innerText.trim(), notes:tds[5].innerText.trim() };
+    });
+    localStorage.setItem('avalon_social', JSON.stringify(SOCIAL));
+
+    // Plays
+    const pRows = qsa('#playsTbl tbody tr');
+    PLAYS = Array.from(pRows).map(tr=>{
+      const tds=tr.children;
+      return { title:tds[0].innerText.trim(), playwright:tds[1].innerText.trim(), director:tds[2].innerText.trim(), theatre:tds[3].innerText.trim(), dates:tds[4].innerText.trim(), links:tds[5].innerText.trim(), notes:tds[6].innerText.trim() };
+    });
+    localStorage.setItem('avalon_plays', JSON.stringify(PLAYS));
+
+    // Books
+    const bRows = qsa('#booksTbl tbody tr');
+    BOOKS = Array.from(bRows).map(tr=>{
+      const tds=tr.children;
+      return { title:tds[0].innerText.trim(), author:tds[1].innerText.trim(), genre:tds[2].innerText.trim(), links:tds[3].innerText.trim(), notes:tds[4].innerText.trim() };
+    });
+    localStorage.setItem('avalon_books', JSON.stringify(BOOKS));
+
+    toast('Saved to your browser (localStorage)');
+    toggle();
+    renderAll();
+  });
+
+  // ESC cancels edit
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && document.body.classList.contains('editing')) qs('#cancelEdit').click(); });
+}else{
+  // Lock contenteditable off for public
+  qsa('[contenteditable]').forEach(el=>el.setAttribute('contenteditable','false'));
+}
+
+/* ---------- INITIAL RENDER ---------- */
+function renderAll(){ renderFringe(); renderSocial(); renderPlays(); renderBooks(); }
+renderAll();
 </script>
 </body>
 </html>
