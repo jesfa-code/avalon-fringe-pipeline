@@ -3,51 +3,172 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Avalon Talent Pipeline — Galactic</title>
+  <title>Avalon Talent Pipeline — Galactic (with intro + toggles)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ========= THEME & LAYOUT ========= */
     :root{
-      --bg-1:#0b1020;
-      --bg-2:#26163f;
+      --bg-1:#040613;
+      --bg-2:#23123b;
       --accent:#8b5cf6;
       --accent-2:#06b6d4;
-      --card:#0f1724;
       --muted:#94a3b8;
+      --nebula-opacity: 0.30;
+      --twinkle-opacity: 0.9;
+      --drift-duration: 160s;
     }
-    html,body { height:100%; margin:0; background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,0.08), transparent 6%), radial-gradient(800px 400px at 90% 90%, rgba(6,182,212,0.06), transparent 8%), linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#e6eef8; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .container { max-width:1100px; margin:0 auto; padding:28px; }
-    .section { display:none; }
-    .section-active { display:block; }
-    .small-italic { font-style: italic; color: var(--muted); }
-    .link { color: var(--accent); text-decoration: underline; }
-    .stars { position:fixed; inset:0; pointer-events:none; z-index:0; background-image: radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.08), transparent 40%), radial-gradient(1px 1px at 50% 80%, rgba(255,255,255,0.06), transparent 40%), radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.04), transparent 40%), radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.03), transparent 40%); background-size: 1200px 800px; animation: drift 120s linear infinite; filter: blur(.4px); opacity: .9; }
-    @keyframes drift { from { background-position:0 0 } to { background-position: 1000px -500px } }
-    .home-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.04); transition: transform .18s, box-shadow .18s; }
-    .home-card:hover{ transform: translateY(-6px); box-shadow: 0 10px 30px rgba(2,6,23,0.5); border-color: rgba(139,92,246,0.25); }
-    #avalonLogo { height:56px; display:block; }
-    thead { backdrop-filter: blur(6px); background: linear-gradient(180deg, rgba(15,23,36,0.6), rgba(15,23,36,0.4)); }
-    .json-edit { width:100%; height:220px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; background:#071023; color:#dbeafe; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); }
-    .content-layer { position:relative; z-index:10; }
-    .btn-accent { background: linear-gradient(90deg,var(--accent), var(--accent-2)); color: #02111a; font-weight:600; padding:8px 12px; border-radius:8px; border:none; }
+    html,body{height:100%;margin:0;background:
+      radial-gradient(900px 420px at 12% 12%, rgba(139,92,246,0.06), transparent 6%),
+      radial-gradient(700px 420px at 92% 88%, rgba(6,182,212,0.04), transparent 8%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#e6eef8; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    .container{max-width:1100px;margin:0 auto;padding:28px;position:relative;z-index:20;}
+    .section{display:none}
+    .section-active{display:block}
+    .small-italic{font-style:italic;color:var(--muted)}
+    .link{color:var(--accent);text-decoration:underline}
+    .home-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); transition:transform .18s,box-shadow .18s}
+    .home-card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(2,6,23,0.5);border-color:rgba(139,92,246,0.25)}
+    thead{backdrop-filter:blur(6px);background:linear-gradient(180deg, rgba(15,23,36,0.6), rgba(15,23,36,0.4))}
+    .json-edit{width:100%;height:220px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px;background:#071023;color:#dbeafe;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04)}
+    .btn-accent{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#02111a;font-weight:600;padding:8px 12px;border-radius:8px;border:none}
+    /* logo */
+    .avalon-logo{width:220px;height:56px;display:block;cursor:pointer}
+    .logo-wrap{display:flex;align-items:center;gap:12px}
+    .logo-glow{filter:drop-shadow(0 6px 16px rgba(139,92,246,0.18)) drop-shadow(0 2px 6px rgba(6,182,212,0.06));transition:transform .18s,filter .18s}
+    .logo-wrap:hover .logo-glow{transform:translateY(-3px) scale(1.02);filter:drop-shadow(0 10px 30px rgba(139,92,246,0.28)) drop-shadow(0 4px 12px rgba(6,182,212,0.12))}
+
+    /* ========= NEBULA & STARS ========= */
+    .nebula{position:fixed;inset:-10% -10% auto -10%;height:70vh;z-index:0;pointer-events:none;
+      background:
+        radial-gradient(40% 30% at 10% 40%, rgba(139,92,246,0.18), transparent 20%),
+        radial-gradient(30% 40% at 80% 70%, rgba(6,182,212,0.14), transparent 18%),
+        radial-gradient(45% 30% at 60% 20%, rgba(255,120,150,0.08), transparent 15%);
+      mix-blend-mode:screen;filter:blur(48px) saturate(110%);opacity:var(--nebula-opacity);transform:translateZ(0);animation:nebMove 28s linear infinite alternate;
+    }
+    @keyframes nebMove{0%{transform:translate(-2%,-1%) scale(1)}100%{transform:translate(2%,1%) scale(1.03)}}
+
+    .stars-static{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:
+      radial-gradient(1px 1px at 5% 12%, rgba(255,255,255,0.06), transparent 40%),
+      radial-gradient(1px 1px at 18% 48%, rgba(255,255,255,0.04), transparent 40%),
+      radial-gradient(1px 1px at 32% 24%, rgba(255,255,255,0.03), transparent 40%),
+      radial-gradient(1px 1px at 68% 70%, rgba(255,255,255,0.05), transparent 40%),
+      radial-gradient(1px 1px at 86% 40%, rgba(255,255,255,0.04), transparent 40%);
+      background-size:1200px 800px;animation:drift var(--drift-duration) linear infinite;filter:blur(.4px) brightness(0.95);opacity:0.95;
+    }
+    .twinkles{position:fixed;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen}
+    .twinkles::before,.twinkles::after{content:"";position:absolute;inset:0;opacity:var(--twinkle-opacity)}
+    .twinkles::before{background-image:
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 22% 40%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 35% 70%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 48% 30%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 58% 58%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 72% 20%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 86% 78%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px);
+      animation:twinkleSlow 6s ease-in-out infinite;filter:blur(.3px);
+    }
+    .twinkles::after{background-image:
+      radial-gradient(circle at 8% 58%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 18% 78%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 28% 12%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 42% 86%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 63% 42%, rgba(255,255,255,0.85) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 78% 14%, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.0) 2px),
+      radial-gradient(circle at 92% 46%, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.0) 2px);
+      animation:twinkleFast 3.6s ease-in-out infinite;opacity:calc(var(--twinkle-opacity)*0.9);filter:blur(.4px);
+    }
+    @keyframes twinkleSlow{0%{opacity:calc(var(--twinkle-opacity)*0.2);transform:scale(.98)}50%{opacity:var(--twinkle-opacity);transform:scale(1.05)}100%{opacity:calc(var(--twinkle-opacity)*0.3);transform:scale(1)}}
+    @keyframes twinkleFast{0%{opacity:calc(var(--twinkle-opacity)*0.1);transform:scale(.9)}45%{opacity:var(--twinkle-opacity);transform:scale(1.12)}100%{opacity:calc(var(--twinkle-opacity)*0.15);transform:scale(1)}}
+    @keyframes drift{from{background-position:0 0} to{background-position:1400px -600px}}
+
+    /* ========= INTRO ANIMATION =========
+       Sequence:
+         0 - 0.12s  : full-screen white flash
+         0.12 - 0.45s: thin horizontal white line appears (flicker)
+         0.45 - 1.1s : line "stretches/explodes" into radial expansion + fade-out revealing homepage
+    */
+    .intro-overlay{position:fixed;inset:0;z-index:9999;background:transparent;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .intro-flash{position:absolute;inset:0;background:white;opacity:0;animation:flashAnim .9s ease-in-out forwards}
+    .intro-line{position:absolute;height:2px;width:10%;background:white;opacity:0;filter:drop-shadow(0 6px 14px rgba(255,255,255,0.12));animation:lineAnim 1.05s ease-in-out forwards}
+    .intro-burst{position:absolute;border-radius:50%;width:120px;height:120px;background:radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(139,92,246,0.2) 30%, rgba(6,182,212,0.06) 65%, transparent 100%);opacity:0;transform:scale(.2);animation:burstAnim 1.05s ease-in-out forwards}
+    @keyframes flashAnim{
+      0%{opacity:0} 6%{opacity:1} 12%{opacity:0} 100%{opacity:0}
+    }
+    @keyframes lineAnim{
+      0%{opacity:0; width:2%}
+      12%{opacity:1; width:14%}
+      28%{opacity:0.95; transform:translateX(0)}
+      40%{opacity:1}
+      45%{width:100%; transform:scaleX(1); border-radius:0}
+      70%{opacity:0.9}
+      100%{opacity:0; transform:scale(32)}
+    }
+    @keyframes burstAnim{
+      0%{opacity:0; transform:scale(.18)}
+      45%{opacity:1; transform:scale(1)}
+      70%{opacity:0.85; transform:scale(10)}
+      100%{opacity:0; transform:scale(36)}
+    }
+
+    /* ========= PRESENTATION MODE ========= */
+    body.presentation h1{font-size:2.6rem}
+    body.presentation .home-card{transform:none;box-shadow:none}
+    body.presentation .container{max-width:1400px;padding:36px}
+    body.presentation .json-edit{height:320px}
+    body.presentation .avalon-logo{width:320px}
+    /* Minor performance safe-areas */
+    @media (max-width:640px){ .container{padding:18px} .avalon-logo{width:160px;height:48px} }
+
   </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
+  <!-- Nebula + star layers -->
+  <div class="nebula" id="nebulaLayer" aria-hidden="true"></div>
+  <div class="stars-static" id="staticStars" aria-hidden="true"></div>
+  <div class="twinkles" id="twinkleLayer" aria-hidden="true"></div>
 
-  <div class="container content-layer">
+  <!-- Intro overlay -->
+  <div id="intro" class="intro-overlay" aria-hidden="true">
+    <div class="intro-flash" id="introFlash"></div>
+    <div class="intro-line" id="introLine" style="top:50%;left:45%;"></div>
+    <div class="intro-burst" id="introBurst" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  </div>
 
-    <!-- HEADER -->
+  <div class="container content-layer" id="mainContent" aria-hidden="true" style="opacity:0;transition:opacity .6s ease;">
+    <!-- header -->
     <header class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-4">
-        <!-- Put your image file named avalon-logo.png (or change src to your filename). If it fails, fallback shows text. -->
-        <img id="avalonLogo" src="avalon-logo.png" alt="Avalon Entertainment" onerror="this.style.display='none'">
+        <div class="logo-wrap" onclick="navigate('home')" title="Avalon — click to go home" role="button">
+          <svg class="avalon-logo logo-glow" viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+              <filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b" /><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <rect rx="12" width="640" height="160" fill="transparent" />
+            <g filter="url(#fGlow)"><text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="64" fill="url(#g1)">AVALON</text></g>
+            <text x="50%" y="85%" text-anchor="middle" dominant-baseline="middle" font-family="Inter, Arial, sans-serif" font-weight="500" font-size="14" fill="#cfe9ff" opacity="0.85">ENTERTAINMENT PIPELINE</text>
+          </svg>
+        </div>
+
         <div>
-          <h1 class="text-2xl font-bold" style="color: #f8fafc;">Avalon Talent Pipeline</h1>
+          <h1 class="text-2xl font-bold" style="color:#f8fafc;">Avalon Talent Pipeline</h1>
           <p class="text-sm" style="color:var(--muted)">Cinematic pipeline — Fringe, Social, Plays, Books, Pitches</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
+        <div class="flex gap-1 items-center">
+          <button id="effectsToggleBtn" class="px-3 py-2 rounded border">Effects</button>
+          <div id="effectsMenu" style="display:none;" class="p-2 bg-[#071129] rounded border text-sm">
+            <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="nebulaCheckbox"> Nebula</label>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox" id="twinkleCheckbox"> Twinkles</label>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox" id="starsCheckbox"> Static stars</label>
+          </div>
+        </div>
+
+        <button id="presentationBtn" class="px-3 py-2 rounded border">Presentation</button>
+        <button id="exportBtn" class="px-3 py-2 rounded border">Export JSON</button>
         <button id="goHome" class="btn-accent">Home</button>
         <button id="openAdminBtn" class="px-3 py-2 rounded border border-white/10">Admin</button>
       </div>
@@ -60,30 +181,30 @@
         <p class="text-sm" style="color:var(--muted)">Jump into datasets, submit suggestions, or use the Admin panel to edit tables locally.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
-          <a href="#fringe" onclick="navigate('fringe'); return false;" class="home-card block p-4 rounded">
+          <button onclick="navigate('fringe')" class="home-card block p-4 rounded text-left">
             <h3 class="font-semibold" style="color:#fff">Fringe Comedians</h3>
             <p class="text-sm" style="color:var(--muted)">Full dataset, reviews & clips — updated weekly.</p>
-          </a>
-          <a href="#social" onclick="navigate('social'); return false;" class="home-card block p-4 rounded">
+          </button>
+          <button onclick="navigate('social')" class="home-card block p-4 rounded text-left">
             <h3 class="font-semibold">Social Media Comedians</h3>
             <p class="text-sm" style="color:var(--muted)">Creators with IG/TikTok reach and viral hooks.</p>
-          </a>
-          <a href="#plays" onclick="navigate('plays'); return false;" class="home-card block p-4 rounded">
+          </button>
+          <button onclick="navigate('plays')" class="home-card block p-4 rounded text-left">
             <h3 class="font-semibold">London Plays</h3>
             <p class="text-sm" style="color:var(--muted)">Current London runs — directors & theatres included.</p>
-          </a>
-          <a href="#books" onclick="navigate('books'); return false;" class="home-card block p-4 rounded">
+          </button>
+          <button onclick="navigate('books')" class="home-card block p-4 rounded text-left">
             <h3 class="font-semibold">BookTok Books</h3>
             <p class="text-sm" style="color:var(--muted)">Trending books and media buzz.</p>
-          </a>
-          <a href="#pitches" onclick="navigate('pitches'); return false;" class="home-card block p-4 rounded bg-[linear-gradient(90deg,#3b82f6,rgba(139,92,246,0.18))]">
+          </button>
+          <button onclick="navigate('pitches')" class="home-card block p-4 rounded text-left bg-[linear-gradient(90deg,#3b82f6,rgba(139,92,246,0.18))]">
             <h3 class="font-semibold">Pitches</h3>
             <p class="text-sm" style="color:#071031">Dev notes and the mockumentary/sketch pitch.</p>
-          </a>
-          <a href="#suggest" onclick="navigate('suggest'); return false;" class="home-card block p-4 rounded">
+          </button>
+          <button onclick="navigate('suggest')" class="home-card block p-4 rounded text-left">
             <h3 class="font-semibold">Suggest / Submissions</h3>
             <p class="text-sm" style="color:var(--muted)">Forms for each section</p>
-          </a>
+          </button>
         </div>
 
         <p class="text-xs text-slate-400 mt-4">Tip: Admin edits are local to your browser. For multi-user editing I can set up Google Sheet sync or a small CMS.</p>
@@ -134,7 +255,7 @@
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
       </div>
 
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
     <!-- SOCIAL -->
@@ -172,7 +293,7 @@
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
       </div>
 
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
     <!-- PLAYS -->
@@ -211,7 +332,7 @@
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSflXbVZyY5wlAd4-qScZOKVY8iYYhsOR65aaGOTetHf1dtVgg/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
       </div>
 
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
     <!-- BOOKS -->
@@ -248,7 +369,7 @@
         <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="420" frameborder="0">Loading…</iframe>
       </div>
 
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
     <!-- PITCHES -->
@@ -257,7 +378,6 @@
         <h2 class="text-xl font-semibold mb-2">Pitch — Mockumentary Sketch (The Platform)</h2>
         <p class="small-italic">A modern Real McCoy reimagined as a mockumentary inside a fictional social media company — short-form clips styled for TikTok + 20–25 minute broadcast episodes.</p>
 
-        <!-- Full expanded Pitches content (condensed visually here; full content available in previous messages) -->
         <div class="mt-3 text-sm" style="color:var(--muted)">
           <h3 class="font-semibold">Logline</h3>
           <p>A mockumentary-sketch hybrid set inside a fictional social-platform where influencers and creators churn out viral content — deadpan satire with short-form clips built for TikTok/YouTube and a 20–25 minute broadcast strand.</p>
@@ -273,36 +393,24 @@
         </div>
       </div>
 
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
     <!-- SUGGEST -->
     <section id="suggest" class="section px-0">
       <h2 class="text-xl font-semibold mb-3">Public Submission Forms</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 bg-[#071129] border rounded">
-          <h4 class="font-semibold">Fringe Comedians</h4>
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe>
-        </div>
-        <div class="p-4 bg-[#071129] border rounded">
-          <h4 class="font-semibold">Social Media Comedians</h4>
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe>
-        </div>
-        <div class="p-4 bg-[#071129] border rounded">
-          <h4 class="font-semibold">Book / Plays Suggestions</h4>
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe>
-        </div>
+        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Fringe Comedians</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfPsKCHb7jIQwYHdj2QPdUCzWBmX_mJ6s_ASuRJzLG1JhFxzQ/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
+        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Social Media Comedians</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrxIb-kATP7eo6HTwlLBLDC3cNS1xof_Ts2UJ7Wur2yAwuJw/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
+        <div class="p-4 bg-[#071129] border rounded"><h4 class="font-semibold">Book / Plays Suggestions</h4><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSchL7IzTz-fimHhkUFH3GuhmOvClGe9k9x0TSzDImNyig_5tg/viewform?embedded=true" width="100%" height="300" frameborder="0"></iframe></div>
       </div>
-
-      <div class="mt-6"><a class="link" href="#home" onclick="navigate('home'); return false;">← Back to Home</a></div>
+      <div class="mt-6"><button class="link" onclick="navigate('home')">← Back to Home</button></div>
     </section>
 
-    <footer class="mt-8 text-xs text-slate-400">
-      <p>Built for Avalon — internal demo. Admin edits are client-side and stored in your browser. Ask me to hook up Google Sheets or a CMS for team editing & publishing.</p>
-    </footer>
+    <footer class="mt-8 text-xs text-slate-400"><p>Built for Avalon — internal demo. Admin edits are client-side and stored in your browser. Ask me to hook up Google Sheets or a CMS for team editing & publishing.</p></footer>
   </div>
 
-  <!-- ADMIN MODAL (client-side) -->
+  <!-- ADMIN MODAL -->
   <div id="adminModal" style="display:none; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:60; align-items:center; justify-content:center;">
     <div style="width:92%; max-width:1100px;" class="bg-[#071129] rounded shadow p-4 border">
       <div class="flex justify-between items-center mb-2">
@@ -317,35 +425,23 @@
         <div>
           <label class="font-semibold">Fringe (JSON)</label>
           <textarea id="adminFringe" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2">
-            <button id="saveFringe" class="px-3 py-2 btn-accent rounded">Save</button>
-            <button id="loadFringe" class="px-3 py-2 rounded border">Reload</button>
-          </div>
+          <div class="flex gap-2 mt-2"><button id="saveFringe" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadFringe" class="px-3 py-2 rounded border">Reload</button></div>
         </div>
         <div>
           <label class="font-semibold">Social (JSON)</label>
           <textarea id="adminSocial" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2">
-            <button id="saveSocial" class="px-3 py-2 btn-accent rounded">Save</button>
-            <button id="loadSocial" class="px-3 py-2 rounded border">Reload</button>
-          </div>
+          <div class="flex gap-2 mt-2"><button id="saveSocial" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadSocial" class="px-3 py-2 rounded border">Reload</button></div>
         </div>
 
         <div>
           <label class="font-semibold">Plays (JSON)</label>
           <textarea id="adminPlays" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2">
-            <button id="savePlays" class="px-3 py-2 btn-accent rounded">Save</button>
-            <button id="loadPlays" class="px-3 py-2 rounded border">Reload</button>
-          </div>
+          <div class="flex gap-2 mt-2"><button id="savePlays" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadPlays" class="px-3 py-2 rounded border">Reload</button></div>
         </div>
         <div>
           <label class="font-semibold">Books (JSON)</label>
           <textarea id="adminBooks" class="json-edit rounded border"></textarea>
-          <div class="flex gap-2 mt-2">
-            <button id="saveBooks" class="px-3 py-2 btn-accent rounded">Save</button>
-            <button id="loadBooks" class="px-3 py-2 rounded border">Reload</button>
-          </div>
+          <div class="flex gap-2 mt-2"><button id="saveBooks" class="px-3 py-2 btn-accent rounded">Save</button><button id="loadBooks" class="px-3 py-2 rounded border">Reload</button></div>
         </div>
       </div>
 
@@ -354,9 +450,9 @@
   </div>
 
 <script>
-/* --------------------------
-   Built-in data (rich objects)
-   -------------------------- */
+/* ========= DATA =========
+   same built-in datasets (fringe/social/plays/books)
+*/
 const BUILTIN_fringe = [
   {"id":1,"name":"Ayo Adenekan","show":"Black Mediocrity","about":"Personal storytelling about growing up Black & queer in Edinburgh.","agent":"Unagented","email":"ayoadenekan767@gmail.com","venues":"Monkey Barrel / Brass Tacks / The Tron","soldOutCount":22,"addedShows":3,"review":"https://festmag.com/2025/08/03/review-ayo-adenekan-black-mediocrity/","clip":"https://www.tiktok.com/@zai_swanzy/video/7539470786516634902","developPotential":8,"notes":"<span class='small-italic'>Strong local sell-outs; warm, character-led writing — good for live special or pilot development.</span>"},
   {"id":2,"name":"Toussaint Douglass","show":"Accessible Pigeon Material","about":"Eccentric, prop-driven debut mixing pigeons, family and neurodivergence.","agent":"UTC Artist Management","email":"(agent contact via UTC)","venues":"Pleasance Courtyard / Bunker One","soldOutCount":0,"addedShows":0,"review":"https://www.theguardian.com/stage/2025/aug/08/toussaint-douglass-accessible-pigeon-material-review-pleasance-courtyard-edinburgh","clip":"https://www.youtube.com/results?search_query=Toussaint+Douglass+Accessible+Pigeon+Material","developPotential":7,"notes":"<span class='small-italic'>Inventive stage prop work and distinct voice — good for character-led sketch development.</span>"},
@@ -388,275 +484,149 @@ const BUILTIN_books = [
   {"id":2,"title":"The Viral Life","author":"Alice Page","genre":"Contemporary","trending":"BookTok microfiction trend","links":"#","Score":7}
 ];
 
-/* --------------------------
-   localStorage helpers
-   -------------------------- */
+/* ========= localStorage helpers & seeding ========= */
 const STORAGE_PREFIX = 'avalon_pipeline_v1_';
-function saveToLocal(key, val){
-  try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(val)); }
-  catch(e){ console.warn('Could not save to localStorage', e); }
-}
-function loadFromLocal(key){
-  try { const raw = localStorage.getItem(STORAGE_PREFIX + key); if(!raw) return null; return JSON.parse(raw); } 
-  catch(e){ console.warn('Could not load local',e); return null; }
-}
-function resetBuiltIn(){
-  saveToLocal('fringe', BUILTIN_fringe);
-  saveToLocal('social', BUILTIN_social);
-  saveToLocal('plays', BUILTIN_plays);
-  saveToLocal('books', BUILTIN_books);
-  loadAllAndRender();
-}
-
-/* seed local data if missing */
+function saveToLocal(key,val){ try{ localStorage.setItem(STORAGE_PREFIX+key, JSON.stringify(val)); }catch(e){ console.warn(e); } }
+function loadFromLocal(key){ try{ const r = localStorage.getItem(STORAGE_PREFIX+key); return r ? JSON.parse(r) : null; }catch(e){ console.warn(e); return null; } }
+function resetBuiltIn(){ saveToLocal('fringe', BUILTIN_fringe); saveToLocal('social', BUILTIN_social); saveToLocal('plays', BUILTIN_plays); saveToLocal('books', BUILTIN_books); loadAllAndRender(); }
 if(!loadFromLocal('fringe')) resetBuiltIn();
 
-/* runtime arrays */
+/* ========= runtime arrays ========= */
 let fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice();
 let socialDATA = loadFromLocal('social') || BUILTIN_social.slice();
 let playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice();
 let booksDATA = loadFromLocal('books') || BUILTIN_books.slice();
 
-/* --------------------------
-   rendering helpers
-   -------------------------- */
-function renderFringeTable(rows){
-  const tbody = document.getElementById('fringe-body'); tbody.innerHTML = '';
-  rows.forEach((r, idx)=>{
-    const tr = document.createElement('tr'); tr.className = 'border-b hover:bg-[#071425] align-top';
-    tr.innerHTML = `
-      <td class="px-3 py-3">${idx+1}</td>
-      <td class="px-3 py-3 font-semibold">${r.name || ''}</td>
-      <td class="px-3 py-3 italic">${r.show || ''}</td>
-      <td class="px-3 py-3 max-w-xs">${r.about || ''}<div class="mt-1">${r.notes || ''}</div></td>
-      <td class="px-3 py-3">${r.venues || ''}</td>
-      <td class="px-3 py-3">${r.agent || ''}<div class="text-sm">${r.email || ''}</div></td>
-      <td class="px-3 py-3"><div class="flex flex-col gap-1">${r.review ? `<a class="link" target="_blank" href="${r.review}">Read review</a>` : ''}${r.clip ? `<a class="link" target="_blank" href="${r.clip}">Watch clip</a>` : ''}</div></td>
-      <td class="px-3 py-3">${(r.soldOutCount || '—')} / ${(r.addedShows || '—')}</td>
-      <td class="px-3 py-3">${r.developPotential ?? ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+/* ========= rendering helpers ========= */
+function renderFringeTable(rows){ const tbody=document.getElementById('fringe-body'); tbody.innerHTML=''; rows.forEach((r,idx)=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3">${idx+1}</td><td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3 italic">${r.show||''}</td><td class="px-3 py-3 max-w-xs">${r.about||''}<div class="mt-1">${r.notes||''}</div></td><td class="px-3 py-3">${r.venues||''}</td><td class="px-3 py-3">${r.agent||''}<div class="text-sm">${r.email||''}</div></td><td class="px-3 py-3"><div class="flex flex-col gap-1">${r.review?`<a class="link" target="_blank" href="${r.review}">Read review</a>`:''}${r.clip?`<a class="link" target="_blank" href="${r.clip}">Watch clip</a>`:''}</div></td><td class="px-3 py-3">${(r.soldOutCount||'—')} / ${(r.addedShows||'—')}</td><td class="px-3 py-3">${r.developPotential ?? ''}</td>`; tbody.appendChild(tr); });}
+function renderSocialTable(rows){ const tbody=document.getElementById('social-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.name||''}</td><td class="px-3 py-3">${r.platform||''}</td><td class="px-3 py-3">${r.followers||''}</td><td class="px-3 py-3">${r.style||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
+function renderPlaysTable(rows){ const tbody=document.getElementById('plays-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.playwright||''}</td><td class="px-3 py-3">${r.director||''}</td><td class="px-3 py-3">${r.theatre||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.reviews?`<a class="link" href="${r.reviews}" target="_blank">Read</a>`:''}</td><td class="px-3 py-3">${r.Score||''}</td><td class="px-3 py-3">${r.notes||''}</td>`; tbody.appendChild(tr); });}
+function renderBooksTable(rows){ const tbody=document.getElementById('books-body'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top'; tr.innerHTML=`<td class="px-3 py-3 font-semibold">${r.title||''}</td><td class="px-3 py-3">${r.author||''}</td><td class="px-3 py-3">${r.genre||''}</td><td class="px-3 py-3">${r.trending||''}</td><td class="px-3 py-3">${r.links||''}</td><td class="px-3 py-3">${r.Score||''}</td>`; tbody.appendChild(tr); });}
 
-function renderSocialTable(rows){
-  const tbody = document.getElementById('social-body'); tbody.innerHTML = '';
-  rows.forEach(r=>{
-    const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top';
-    tr.innerHTML=`
-      <td class="px-3 py-3 font-semibold">${r.name || ''}</td>
-      <td class="px-3 py-3">${r.platform || ''}</td>
-      <td class="px-3 py-3">${r.followers || ''}</td>
-      <td class="px-3 py-3">${r.style || ''}</td>
-      <td class="px-3 py-3">${r.links || ''}</td>
-      <td class="px-3 py-3">${r.Score ?? ''}</td>
-      <td class="px-3 py-3">${r.notes || ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+function loadAllAndRender(){ fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice(); socialDATA = loadFromLocal('social') || BUILTIN_social.slice(); playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice(); booksDATA = loadFromLocal('books') || BUILTIN_books.slice(); applyFringeFilters(); renderSocialTable(socialDATA); renderPlaysTable(playsDATA); renderBooksTable(booksDATA); }
 
-function renderPlaysTable(rows){
-  const tbody=document.getElementById('plays-body'); tbody.innerHTML='';
-  rows.forEach(r=>{
-    const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top';
-    tr.innerHTML=`
-      <td class="px-3 py-3 font-semibold">${r.title || ''}</td>
-      <td class="px-3 py-3">${r.playwright || ''}</td>
-      <td class="px-3 py-3">${r.director || ''}</td>
-      <td class="px-3 py-3">${r.theatre || ''}</td>
-      <td class="px-3 py-3">${r.genre || ''}</td>
-      <td class="px-3 py-3">${r.reviews ? `<a class="link" href="${r.reviews}" target="_blank">Read</a>` : ''}</td>
-      <td class="px-3 py-3">${r.Score ?? ''}</td>
-      <td class="px-3 py-3">${r.notes || ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+/* ========= filtering + CSV ========= */
+function applyFringeFilters(){ const q=(document.getElementById('fringe-search').value||'').toLowerCase(); const minScore=Number(document.getElementById('fringe-minScore').value)||0; const sortBy=document.getElementById('fringe-sortBy').value; const order=document.getElementById('fringe-order').value; let rows=(fringeDATA||[]).filter(r => (r.name||'').toLowerCase().includes(q) || (r.show||'').toLowerCase().includes(q)); rows = rows.filter(r => (r.developPotential || 0) >= minScore); rows.sort((a,b)=>{ const get=(o)=> sortBy==='developPotential' ? (o.developPotential||0) : (sortBy==='soldOutCount' ? (o.soldOutCount||0) : (o.addedShows||0)); const A=get(a), B=get(b); return order==='desc' ? (B-A) : (A-B); }); renderFringeTable(rows); }
+function downloadCsvFromArray(filename, header, rows){ const csvRows=[header].concat(rows.map(r => header.map(h => { const key = {'Name':'name','Show':'show','About':'about','Agent / Email':'agent','Venues':'venues','Review / Clip':'review','Sold / Added':'soldAdded','Score':'developPotential','Notes':'notes','Title':'title','Playwright':'playwright','Director':'director','Theatre':'theatre','Genre':'genre','Reviews':'reviews','Followers':'followers','Platform':'platform','Links':'links','Author':'author'}[h]||h); return String(r[key] ?? '').replace(/"/g,'""'); }))); const csv = csvRows.map(r => r.map(c => `"${c}"`).join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
 
-function renderBooksTable(rows){
-  const tbody=document.getElementById('books-body'); tbody.innerHTML='';
-  rows.forEach(r=>{
-    const tr=document.createElement('tr'); tr.className='border-b hover:bg-[#071425] align-top';
-    tr.innerHTML=`
-      <td class="px-3 py-3 font-semibold">${r.title || ''}</td>
-      <td class="px-3 py-3">${r.author || ''}</td>
-      <td class="px-3 py-3">${r.genre || ''}</td>
-      <td class="px-3 py-3">${r.trending || ''}</td>
-      <td class="px-3 py-3">${r.links || ''}</td>
-      <td class="px-3 py-3">${r.Score ?? ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* load & render helper */
-function loadAllAndRender(){
-  fringeDATA = loadFromLocal('fringe') || BUILTIN_fringe.slice();
-  socialDATA = loadFromLocal('social') || BUILTIN_social.slice();
-  playsDATA = loadFromLocal('plays') || BUILTIN_plays.slice();
-  booksDATA = loadFromLocal('books') || BUILTIN_books.slice();
-  applyFringeFilters();
-  renderSocialTable(socialDATA);
-  renderPlaysTable(playsDATA);
-  renderBooksTable(booksDATA);
-}
-
-/* --------------------------
-   Fringe filters / sort / CSV
-   -------------------------- */
-function applyFringeFilters(){
-  const q = document.getElementById('fringe-search').value.toLowerCase();
-  const minScore = Number(document.getElementById('fringe-minScore').value) || 0;
-  const sortBy = document.getElementById('fringe-sortBy').value;
-  const order = document.getElementById('fringe-order').value;
-  let rows = (fringeDATA||[]).filter(r => (r.name||'').toLowerCase().includes(q) || (r.show||'').toLowerCase().includes(q));
-  rows = rows.filter(r => (r.developPotential || 0) >= minScore);
-  rows.sort((a,b)=>{
-    const A = sortBy === 'developPotential' ? (a.developPotential||0) : (sortBy === 'soldOutCount' ? (a.soldOutCount||0) : (a.addedShows||0));
-    const B = sortBy === 'developPotential' ? (b.developPotential||0) : (sortBy === 'soldOutCount' ? (b.soldOutCount||0) : (b.addedShows||0));
-    return order === 'desc' ? (B - A) : (A - B);
-  });
-  renderFringeTable(rows);
-}
-
-/* CSV helper */
-function downloadCsvFromArray(filename, header, rows){
-  const csvRows = [header].concat(rows.map(r => header.map(h => {
-    // try common keys by label
-    const key = {
-      'Name':'name','Show':'show','About':'about','Agent / Email':'agent','Venues':'venues','Review / Clip':'review','Sold / Added':'soldAdded','Score':'developPotential','Notes':'notes',
-      'Title':'title','Playwright':'playwright','Director':'director','Theatre':'theatre','Genre':'genre','Reviews':'reviews',
-      'Followers':'followers','Platform':'platform','Links':'links','Author':'author'
-    }[h] || h);
-    return String(r[key] ?? '').replace(/"/g,'""');
-  })));
-  const csv = csvRows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
-}
-
-/* wiring UI */
+/* ========= UI wiring ========= */
 document.getElementById('fringe-search').addEventListener('input', applyFringeFilters);
 document.getElementById('fringe-minScore').addEventListener('change', applyFringeFilters);
 document.getElementById('fringe-sortBy').addEventListener('change', applyFringeFilters);
 document.getElementById('fringe-order').addEventListener('change', applyFringeFilters);
-document.getElementById('fringe-reset').addEventListener('click', ()=>{
-  document.getElementById('fringe-search').value=''; document.getElementById('fringe-minScore').value=''; document.getElementById('fringe-sortBy').value='developPotential'; document.getElementById('fringe-order').value='desc'; applyFringeFilters();
-});
-document.getElementById('fringe-csv').addEventListener('click', ()=>{
-  downloadCsvFromArray('fringe.csv', ["Name","Show","About","Agent / Email","Venues","Review / Clip","Sold / Added","Score","Notes"], fringeDATA.map(r=>({
-    name:r.name, show:r.show, about:r.about, 'Agent / Email': r.agent + ' / ' + (r.email||''), venues:r.venues, 'Review / Clip': (r.review||'') + ' | ' + (r.clip||''), 'Sold / Added': (r.soldOutCount||'') + ' / ' + (r.addedShows||''), developPotential: r.developPotential, notes: r.notes || ''
-  })));
-});
+document.getElementById('fringe-reset').addEventListener('click', ()=>{ document.getElementById('fringe-search').value=''; document.getElementById('fringe-minScore').value=''; document.getElementById('fringe-sortBy').value='developPotential'; document.getElementById('fringe-order').value='desc'; applyFringeFilters(); });
+document.getElementById('fringe-csv').addEventListener('click', ()=>{ downloadCsvFromArray('fringe.csv', ["Name","Show","About","Agent / Email","Venues","Review / Clip","Sold / Added","Score","Notes"], fringeDATA); });
 
-/* Social wiring */
-function parseFollowers(str){
-  if(!str) return 0;
-  const m = (str+'').replace(/,/g,'').match(/(\d+(\.\d+)?)([kKmM]?)/);
-  if(!m) return 0;
-  let num = parseFloat(m[1]); const unit = (m[3]||'').toLowerCase();
-  if(unit==='k') num*=1000; if(unit==='m') num*=1_000_000; return num;
-}
-document.getElementById('social-search').addEventListener('input', ()=>{
-  const q = document.getElementById('social-search').value.toLowerCase();
-  const sortBy = document.getElementById('social-sortBy').value;
-  const order = document.getElementById('social-order').value;
-  let rows = socialDATA.filter(s => (s.name||'').toLowerCase().includes(q) || (s.platform||'').toLowerCase().includes(q));
-  rows.sort((a,b)=> {
-    const A = (sortBy === 'Followers' ? parseFollowers(a.followers) : (a.Score||0));
-    const B = (sortBy === 'Followers' ? parseFollowers(b.followers) : (b.Score||0));
-    return order === 'desc' ? (B - A) : (A - B);
-  });
-  renderSocialTable(rows);
-});
+/* social */
+function parseFollowers(str){ if(!str) return 0; const m=(str+'').replace(/,/g,'').match(/(\d+(\.\d+)?)([kKmM]?)/); if(!m) return 0; let num=parseFloat(m[1]); const unit=(m[3]||'').toLowerCase(); if(unit==='k') num*=1000; if(unit==='m') num*=1000000; return num; }
+document.getElementById('social-search').addEventListener('input', ()=>{ const q=(document.getElementById('social-search').value||'').toLowerCase(); const sortBy=document.getElementById('social-sortBy').value; const order=document.getElementById('social-order').value; let rows=socialDATA.filter(s => (s.name||'').toLowerCase().includes(q) || (s.platform||'').toLowerCase().includes(q)); rows.sort((a,b)=>{ const A=(sortBy==='Followers'?parseFollowers(a.followers):(a.Score||0)); const B=(sortBy==='Followers'?parseFollowers(b.followers):(b.Score||0)); return order==='desc'? (B-A) : (A-B); }); renderSocialTable(rows); });
 document.getElementById('social-reset').addEventListener('click', ()=>{ document.getElementById('social-search').value=''; document.getElementById('social-sortBy').value='Score'; document.getElementById('social-order').value='desc'; document.getElementById('social-search').dispatchEvent(new Event('input')); });
 document.getElementById('social-csv').addEventListener('click', ()=>{ downloadCsvFromArray('social.csv', ["Name","Platform","Followers","Style","Links","Score","Notes"], socialDATA); });
 
-/* Plays wiring */
-document.getElementById('plays-search').addEventListener('input', ()=>{
-  const q = document.getElementById('plays-search').value.toLowerCase();
-  let rows = playsDATA.filter(p => (p.title||'').toLowerCase().includes(q) || (p.playwright||'').toLowerCase().includes(q) || (p.theatre||'').toLowerCase().includes(q) || (p.director||'').toLowerCase().includes(q));
-  renderPlaysTable(rows);
-});
+/* plays */
+document.getElementById('plays-search').addEventListener('input', ()=>{ const q=(document.getElementById('plays-search').value||'').toLowerCase(); let rows=playsDATA.filter(p => (p.title||'').toLowerCase().includes(q) || (p.playwright||'').toLowerCase().includes(q) || (p.theatre||'').toLowerCase().includes(q) || (p.director||'').toLowerCase().includes(q)); renderPlaysTable(rows); });
 document.getElementById('plays-reset').addEventListener('click', ()=>{ document.getElementById('plays-search').value=''; document.getElementById('plays-search').dispatchEvent(new Event('input')); });
 document.getElementById('plays-csv').addEventListener('click', ()=>{ downloadCsvFromArray('plays.csv', ["Title","Playwright","Director","Theatre","Genre","Reviews","Score","Notes"], playsDATA); });
 
-/* Books wiring */
-document.getElementById('books-search').addEventListener('input', ()=>{
-  const q = document.getElementById('books-search').value.toLowerCase();
-  let rows = booksDATA.filter(b => (b.title||'').toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q));
-  renderBooksTable(rows);
-});
+/* books */
+document.getElementById('books-search').addEventListener('input', ()=>{ const q=(document.getElementById('books-search').value||'').toLowerCase(); let rows=booksDATA.filter(b => (b.title||'').toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q)); renderBooksTable(rows); });
 document.getElementById('books-reset').addEventListener('click', ()=>{ document.getElementById('books-search').value=''; document.getElementById('books-search').dispatchEvent(new Event('input')); });
 document.getElementById('books-csv').addEventListener('click', ()=>{ downloadCsvFromArray('books.csv', ["Title","Author","Genre","Trending","Links","Score"], booksDATA); });
 
 /* initial render */
 loadAllAndRender();
 
-/* --------------------------
-   Navigation (hash-based + JS)
-   -------------------------- */
-function navigate(id){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active'));
-  const el = document.getElementById(id);
-  if(el) el.classList.add('section-active');
-  history.pushState(null, '', '#' + id);
-  window.scrollTo({top:0, behavior:'smooth'});
-}
+/* ========= navigation ========= */
+function navigate(id){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('section-active')); const el=document.getElementById(id); if(el) el.classList.add('section-active'); history.pushState(null,'','#'+id); window.scrollTo({top:0,behavior:'smooth'}); }
 document.querySelectorAll('a[href^="#"]').forEach(a=> a.addEventListener('click', (e)=>{ e.preventDefault(); const t=a.getAttribute('href').slice(1); navigate(t); }));
 document.getElementById('goHome').addEventListener('click', ()=> navigate('home'));
-window.addEventListener('load', ()=>{ const target = (location.hash || '#home').slice(1); if(document.getElementById(target)) navigate(target); });
+window.addEventListener('load', ()=>{ /* nothing here - intro controls final reveal */ });
 
-/* --------------------------
-   Admin (client-side modal)
-   -------------------------- */
-const ADMIN_PASSWORD = 'avalon-intern-2025'; // change locally if you want
-
-document.getElementById('openAdminBtn').addEventListener('click', ()=>{
-  const p = prompt('Enter admin password to edit data (local only):');
-  if(p === ADMIN_PASSWORD) openAdmin();
-  else if(p!==null) alert('Wrong password.');
-});
-
-function openAdmin(){
-  document.getElementById('adminFringe').value = JSON.stringify(fringeDATA, null, 2);
-  document.getElementById('adminSocial').value = JSON.stringify(socialDATA, null, 2);
-  document.getElementById('adminPlays').value = JSON.stringify(playsDATA, null, 2);
-  document.getElementById('adminBooks').value = JSON.stringify(booksDATA, null, 2);
-  document.getElementById('adminModal').style.display = 'flex';
-}
-
+/* ========= ADMIN MODAL ========= */
+const ADMIN_PASSWORD = 'avalon-intern-2025';
+document.getElementById('openAdminBtn').addEventListener('click', ()=>{ const p = prompt('Enter admin password to edit data (local only):'); if(p === ADMIN_PASSWORD) openAdmin(); else if(p!==null) alert('Wrong password.'); });
+function openAdmin(){ document.getElementById('adminFringe').value = JSON.stringify(fringeDATA,null,2); document.getElementById('adminSocial').value = JSON.stringify(socialDATA,null,2); document.getElementById('adminPlays').value = JSON.stringify(playsDATA,null,2); document.getElementById('adminBooks').value = JSON.stringify(booksDATA,null,2); document.getElementById('adminModal').style.display='flex'; }
 document.getElementById('adminClose').addEventListener('click', ()=>{ document.getElementById('adminModal').style.display='none'; });
 document.getElementById('adminReset').addEventListener('click', ()=>{ if(confirm('Reset local data to built-in defaults?')) resetBuiltIn(); });
 
-document.getElementById('saveFringe').addEventListener('click', ()=>{
-  try { const val = JSON.parse(document.getElementById('adminFringe').value); fringeDATA = val; saveToLocal('fringe', fringeDATA); applyFringeFilters(); alert('Fringe saved locally.'); }
-  catch(e){ alert('Invalid JSON: ' + e.message); }
-});
-document.getElementById('loadFringe').addEventListener('click', ()=>{ document.getElementById('adminFringe').value = JSON.stringify(loadFromLocal('fringe') || fringeDATA, null, 2); });
+document.getElementById('saveFringe').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminFringe').value); fringeDATA = val; saveToLocal('fringe', fringeDATA); applyFringeFilters(); alert('Fringe saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
+document.getElementById('loadFringe').addEventListener('click', ()=> document.getElementById('adminFringe').value = JSON.stringify(loadFromLocal('fringe') || fringeDATA, null, 2));
 
-document.getElementById('saveSocial').addEventListener('click', ()=>{
-  try { const val = JSON.parse(document.getElementById('adminSocial').value); socialDATA = val; saveToLocal('social', socialDATA); renderSocialTable(socialDATA); alert('Social saved locally.'); }
-  catch(e){ alert('Invalid JSON: ' + e.message); }
-});
-document.getElementById('loadSocial').addEventListener('click', ()=>{ document.getElementById('adminSocial').value = JSON.stringify(loadFromLocal('social') || socialDATA, null, 2); });
+document.getElementById('saveSocial').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminSocial').value); socialDATA = val; saveToLocal('social', socialDATA); renderSocialTable(socialDATA); alert('Social saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
+document.getElementById('loadSocial').addEventListener('click', ()=> document.getElementById('adminSocial').value = JSON.stringify(loadFromLocal('social') || socialDATA, null, 2));
 
-document.getElementById('savePlays').addEventListener('click', ()=>{
-  try { const val = JSON.parse(document.getElementById('adminPlays').value); playsDATA = val; saveToLocal('plays', playsDATA); renderPlaysTable(playsDATA); alert('Plays saved locally.'); }
-  catch(e){ alert('Invalid JSON: ' + e.message); }
-});
-document.getElementById('loadPlays').addEventListener('click', ()=>{ document.getElementById('adminPlays').value = JSON.stringify(loadFromLocal('plays') || playsDATA, null, 2); });
+document.getElementById('savePlays').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminPlays').value); playsDATA = val; saveToLocal('plays', playsDATA); renderPlaysTable(playsDATA); alert('Plays saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
+document.getElementById('loadPlays').addEventListener('click', ()=> document.getElementById('adminPlays').value = JSON.stringify(loadFromLocal('plays') || playsDATA, null, 2));
 
-document.getElementById('saveBooks').addEventListener('click', ()=>{
-  try { const val = JSON.parse(document.getElementById('adminBooks').value); booksDATA = val; saveToLocal('books', booksDATA); renderBooksTable(booksDATA); alert('Books saved locally.'); }
-  catch(e){ alert('Invalid JSON: ' + e.message); }
-});
-document.getElementById('loadBooks').addEventListener('click', ()=>{ document.getElementById('adminBooks').value = JSON.stringify(loadFromLocal('books') || booksDATA, null, 2); });
+document.getElementById('saveBooks').addEventListener('click', ()=>{ try{ const val=JSON.parse(document.getElementById('adminBooks').value); booksDATA = val; saveToLocal('books', booksDATA); renderBooksTable(booksDATA); alert('Books saved locally.'); }catch(e){ alert('Invalid JSON: '+e.message); }});
+document.getElementById('loadBooks').addEventListener('click', ()=> document.getElementById('adminBooks').value = JSON.stringify(loadFromLocal('books') || booksDATA, null, 2));
 
-/* final ensure render */
-loadAllAndRender();
+/* ========= Effects toggle UI ========= */
+const effectsToggleBtn = document.getElementById('effectsToggleBtn');
+const effectsMenu = document.getElementById('effectsMenu');
+const nebulaCheckbox = document.getElementById('nebulaCheckbox');
+const twinkleCheckbox = document.getElementById('twinkleCheckbox');
+const starsCheckbox = document.getElementById('starsCheckbox');
+
+effectsToggleBtn.addEventListener('click', ()=> { effectsMenu.style.display = effectsMenu.style.display === 'block' ? 'none' : 'block'; });
+
+/* load saved effects state or defaults */
+const effectsState = loadFromLocal('effectsState') || { nebula:true, twinkles:true, stars:true, presentation:false };
+nebulaCheckbox.checked = effectsState.nebula; twinkleCheckbox.checked = effectsState.twinkles; starsCheckbox.checked = effectsState.stars;
+applyEffectsFromState();
+
+nebulaCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
+twinkleCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
+starsCheckbox.addEventListener('change', ()=>{ saveEffectsState(); applyEffectsFromState(); });
+
+function saveEffectsState(){ const s = { nebula:nebulaCheckbox.checked, twinkles:twinkleCheckbox.checked, stars:starsCheckbox.checked, presentation: document.body.classList.contains('presentation') }; saveToLocal('effectsState', s); }
+function applyEffectsFromState(){
+  document.getElementById('nebulaLayer').style.display = nebulaCheckbox.checked ? 'block' : 'none';
+  document.getElementById('twinkleLayer').style.display = twinkleCheckbox.checked ? 'block' : 'none';
+  document.getElementById('staticStars').style.display = starsCheckbox.checked ? 'block' : 'none';
+}
+
+/* ========= Presentation mode toggle ========= */
+const presentationBtn = document.getElementById('presentationBtn');
+presentationBtn.addEventListener('click', ()=>{ const now = document.body.classList.toggle('presentation'); presentationBtn.textContent = now ? 'Presentation ✓' : 'Presentation'; saveEffectsState(); });
+
+/* ========= Export JSON snapshot ========= */
+document.getElementById('exportBtn').addEventListener('click', ()=>{ const snapshot = { exportedAt: new Date().toISOString(), fringe: fringeDATA, social: socialDATA, plays: playsDATA, books: booksDATA }; const blob = new Blob([JSON.stringify(snapshot,null,2)], { type:'application/json' }); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download = `avalon_pipeline_snapshot_${(new Date()).toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); });
+
+/* ========= Intro animation control ========= */
+const intro = document.getElementById('intro');
+const mainContent = document.getElementById('mainContent');
+function playIntroAndReveal(){
+  // ensure intro visible and content hidden while playing
+  intro.style.display='flex';
+  mainContent.style.opacity = 0;
+  document.getElementById('introFlash').style.display='block';
+  document.getElementById('introLine').style.display='block';
+  document.getElementById('introBurst').style.display='block';
+
+  // animation duration ~1.05s (matches CSS)
+  setTimeout(()=> {
+    // hide intro and reveal site
+    intro.style.display='none';
+    mainContent.style.opacity = 1;
+    // ensure "home" section active (in case hash)
+    const target = (location.hash || '#home').slice(1); if(document.getElementById(target)) navigate(target); else navigate('home');
+  }, 1150); // slight buffer
+}
+
+/* If user has seen intro already in this browser avoid replaying (store flag) */
+const seenIntro = loadFromLocal('seenIntro_v1');
+if(!seenIntro){
+  playIntroAndReveal();
+  try { saveToLocal('seenIntro_v1', true); } catch(e){}
+} else {
+  // fast path: hide intro, show main
+  intro.style.display='none';
+  mainContent.style.opacity = 1;
+}
+
+/* ========= ensure render after any admin changes ========= */
+window.addEventListener('storage', ()=> loadAllAndRender());
 </script>
 </body>
 </html>
